@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -18,15 +19,19 @@ public class IntensityTsvParser {
 	public static void main(String[] args) {
 		DecimalFormat formatter = new DecimalFormat("0.00");
 		try {
-			URI uri=IntensityTsvParser.class.getResource("/jim_intensities.xls").toURI();
+			URI uri=IntensityTsvParser.class.getResource("/intensity_200.xls").toURI();
 			File f=new File(uri);
 			ArrayList<Protein> proteins=IntensityTsvParser.parseTSV(f);
 			
 			for (Protein protein : proteins) {
 				System.out.println(protein.getAccessionNumber());
 				float totalIntensity=protein.getSummedIntensity();
-				for (Peptide peptide : protein.getPeptides()) {
-					System.out.println("\t"+peptide.getSequence()+" ("+formatter.format(100.0f*peptide.getIntensity()/totalIntensity)+"%)");
+				ArrayList<Peptide> peptides=protein.getPeptides();
+				Collections.sort(peptides);
+				Collections.reverse(peptides);
+				for (Peptide peptide : peptides) {
+					float predictorScore=peptides.size()*peptide.getIntensity()/totalIntensity;
+					System.out.println("\t"+peptide.getSequence()+" ("+formatter.format(100.0f*peptide.getIntensity()/totalIntensity)+"%, "+formatter.format(predictorScore)+")");
 				}
 			}
 		} catch (URISyntaxException urise) {
@@ -45,14 +50,16 @@ public class IntensityTsvParser {
 				String accession=st.nextToken();
 				String sequence=st.nextToken();
 				String intensityString=st.nextToken();
+				String chargeString=st.nextToken();
 				float intensity=Float.parseFloat(intensityString);
+				byte charge=Byte.parseByte(chargeString);
 
 				Protein protein=map.get(accession);
 				if (protein==null) {
 					protein=new Protein(accession);
 					map.put(accession, protein);
 				}
-				protein.addPeptide(sequence, intensity);
+				protein.addPeptide(sequence, intensity, charge);
 			}
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
