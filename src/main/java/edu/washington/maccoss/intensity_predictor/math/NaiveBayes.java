@@ -11,14 +11,13 @@ public class NaiveBayes {
 	private final NormalDistribution[] positive;
 	private final NormalDistribution[] negative;
 
-	NaiveBayes(double positivePrior, double negativePrior, NormalDistribution[] positive,
-			NormalDistribution[] negative) {
+	NaiveBayes(double positivePrior, double negativePrior, NormalDistribution[] positive, NormalDistribution[] negative) {
 		this.positivePrior=positivePrior;
 		this.negativePrior=negativePrior;
 		this.positive=positive;
 		this.negative=negative;
 	}
-	
+
 	public double getLogLikelihood(double[] data) {
 		int featureCount=Math.min(positive.length, data.length);
 
@@ -27,10 +26,10 @@ public class NaiveBayes {
 		for (int i=0; i<featureCount; i++) {
 			double posFeatureProb=positive[i].density(data[i]);
 			double negFeatureProb=negative[i].density(data[i]);
-			
+
 			// ignore sitatuations where both probabilities are 0
 			if (posFeatureProb==0&&negFeatureProb==0) continue;
-			
+
 			posLogProb+=Math.log10(posFeatureProb);
 			negLogProb+=Math.log10(negFeatureProb);
 		}
@@ -51,10 +50,8 @@ public class NaiveBayes {
 			double[] posCol=getColumn(positiveData, i);
 			double[] negCol=getColumn(negativeData, i);
 
-			positive[i]=new NormalDistributionImpl(meanCalc.evaluate(posCol),
-					stdevCalc.evaluate(posCol));
-			negative[i]=new NormalDistributionImpl(meanCalc.evaluate(negCol),
-					stdevCalc.evaluate(negCol));
+			positive[i]=new NormalDistributionImpl(meanCalc.evaluate(posCol), stdevCalc.evaluate(posCol));
+			negative[i]=new NormalDistributionImpl(meanCalc.evaluate(negCol), stdevCalc.evaluate(negCol));
 		}
 
 		return new NaiveBayes(positivePrior, negativePrior, positive, negative);

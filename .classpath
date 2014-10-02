@@ -31,5 +31,22 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="/Users/searleb/Documents/school/maccoss rotation/workspace/biojava3-core-3.1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="/Users/searleb/Documents/school/maccoss rotation/workspace/biojava3-aa-prop-3.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/annotations-7.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/collections-generic-4.01.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-20040616.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/conja-1.061.jar"/>
+	<classpathentry kind="lib" path="lib/dsutils-1.051.jar"/>
+	<classpathentry kind="lib" path="lib/google-collections-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jlibsvm-0.92-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/JSAP-2.0a-ds1.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/ml-0.921.jar"/>
+	<classpathentry kind="lib" path="lib/runutils-0.911.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.6.4.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.6.4.jar"/>
+	<classpathentry kind="lib" path="lib/stats-0.931.jar"/>
+	<classpathentry kind="lib" path="lib/trees-1.031.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

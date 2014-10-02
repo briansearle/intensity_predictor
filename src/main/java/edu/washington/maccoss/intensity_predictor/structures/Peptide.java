@@ -7,6 +7,8 @@ import org.biojava3.aaproperties.PeptideProperties;
 
 
 public class Peptide implements Comparable<Peptide> {
+	private static final double LOG2=Math.log(2.0);
+	
 	private final String sequence;
 	private final Protein protein;
 	private final HashMap<String, Float> modifiedForms;
@@ -92,5 +94,11 @@ public class Peptide implements Comparable<Peptide> {
 			}
 		}
 		return sb.toString();
+	}
+
+	public float getPredictorScore(float totalIntensity, int peptideCount) {
+		float predictorScore=peptideCount*getIntensity()/totalIntensity;
+		predictorScore=(float)(Math.log(predictorScore)/LOG2);
+		return predictorScore;
 	}
 }
