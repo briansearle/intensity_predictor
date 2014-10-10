@@ -17,6 +17,16 @@ public class NaiveBayes {
 		this.positive=positive;
 		this.negative=negative;
 	}
+	
+	public String toString() {
+		StringBuilder sb=new StringBuilder();
+		for (int i=0; i<positive.length; i++) {
+			double distance=Math.abs(positive[i].getMean()-negative[i].getMean());
+			double averageStdev=(positive[i].getStandardDeviation()+negative[i].getStandardDeviation())/2.0;
+			sb.append(i+") distance:"+distance+" / avgstdev:"+averageStdev+" = "+(distance/averageStdev)+"\n");
+		}
+		return sb.toString();
+	}
 
 	public double getLogLikelihood(double[] data) {
 		int featureCount=Math.min(positive.length, data.length);
@@ -50,8 +60,14 @@ public class NaiveBayes {
 			double[] posCol=getColumn(positiveData, i);
 			double[] negCol=getColumn(negativeData, i);
 
-			positive[i]=new NormalDistributionImpl(meanCalc.evaluate(posCol), stdevCalc.evaluate(posCol));
-			negative[i]=new NormalDistributionImpl(meanCalc.evaluate(negCol), stdevCalc.evaluate(negCol));
+			double posMean=meanCalc.evaluate(posCol);
+			double posStdev=stdevCalc.evaluate(posCol);
+			if (posStdev==0) posStdev=Float.MIN_VALUE;
+			double negMean=meanCalc.evaluate(negCol);
+			double negStdev=stdevCalc.evaluate(negCol);
+			if (negStdev==0) negStdev=Float.MIN_VALUE;
+			positive[i]=new NormalDistributionImpl(posMean, posStdev);
+			negative[i]=new NormalDistributionImpl(negMean, negStdev);
 		}
 
 		return new NaiveBayes(positivePrior, negativePrior, positive, negative);

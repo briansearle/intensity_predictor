@@ -7,6 +7,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import edu.berkeley.compbio.jlibsvm.SvmProblem;
+import edu.berkeley.compbio.jlibsvm.regression.MutableRegressionProblemImpl;
 import edu.washington.maccoss.intensity_predictor.math.NaiveBayes;
 import edu.washington.maccoss.intensity_predictor.parsers.IntensityTsvParser;
 import edu.washington.maccoss.intensity_predictor.structures.Peptide;
@@ -17,10 +19,13 @@ public class MainIntensity200Example {
 	public static void main(String[] args) {
 		DecimalFormat formatter=new DecimalFormat("0.00");
 		try {
-			URI uri=IntensityTsvParser.class.getResource("/intensity_200.xls").toURI();
+			//URI uri=IntensityTsvParser.class.getResource("/intensity_200.xls").toURI();
+			URI uri=IntensityTsvParser.class.getResource("/sprg_peptides.txt").toURI();
 			File f=new File(uri);
 			ArrayList<Protein> proteins=IntensityTsvParser.parseTSV(f);
-
+			
+			//MutableRegressionProblemImpl<Float>  
+			
 			ArrayList<double[]> highScores=new ArrayList<double[]>();
 			ArrayList<double[]> lowScores=new ArrayList<double[]>();
 			for (Protein protein : proteins) {
@@ -30,16 +35,19 @@ public class MainIntensity200Example {
 
 				for (Peptide peptide : peptides) {
 					float predictorScore=peptide.getPredictorScore(totalIntensity, peptideCount);
-					if (predictorScore>=1.0f) {
+					if (peptide.getIntensity()>=2.0f) {
 						highScores.add(peptide.getScoreArray());
-					} else if (predictorScore<=-2.0f) {
+					} else if (peptide.getIntensity()<=0.5f) {
 						lowScores.add(peptide.getScoreArray());
 					}
 				}
 			}
+			
+			System.out.println(highScores.size()+" / "+lowScores.size());
 
 			NaiveBayes bayes=NaiveBayes.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]));
-
+			System.out.println(bayes);
+			
 			for (Protein protein : proteins) {
 				// System.out.println(protein.getAccessionNumber());
 				float totalIntensity=protein.getSummedIntensity();
@@ -51,7 +59,7 @@ public class MainIntensity200Example {
 				for (Peptide peptide : peptides) {
 					float predictorScore=peptide.getPredictorScore(totalIntensity, peptideCount);
 					double logLikelihood=bayes.getLogLikelihood(peptide.getScoreArray());
-					System.out.println(protein.getAccessionNumber()+"\t"+peptide.getSequence()+"\t"+formatter.format(100.0f*peptide.getIntensity()/totalIntensity)+"%\t"+predictorScore+"\t"
+					System.out.println(protein.getAccessionNumber()+"\t"+peptide.getSequence()+"\t"+formatter.format(100.0f*peptide.getIntensity()/totalIntensity)+"%\t"+peptide.getIntensity()+"\t"
 							+logLikelihood);
 				}
 			}
