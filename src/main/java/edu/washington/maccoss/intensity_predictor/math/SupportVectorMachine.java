@@ -1,5 +1,6 @@
 package edu.washington.maccoss.intensity_predictor.math;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +34,7 @@ import edu.berkeley.compbio.jlibsvm.scaler.NoopScalingModelLearner;
 import edu.berkeley.compbio.jlibsvm.scaler.ScalingModelLearner;
 import edu.berkeley.compbio.jlibsvm.scaler.ZscoreScalingModelLearner;
 import edu.berkeley.compbio.jlibsvm.util.SparseVector;
+import edu.berkeley.compbio.ml.CrossValidationResults;
 
 public class SupportVectorMachine {
 	private SVM svm;
@@ -62,12 +64,47 @@ public class SupportVectorMachine {
 
 		float[] x= {0, 0, 1, 1, 2, 2};
 		float[][] data=new float[][] { {5, 6, 5, 1, 7, 6, 4}, {4, 2, 3, 2, 8, 5, 5}, {2, 3, 4, 1, 7, 7, 6}, {9, 7, 2, 2, 3, 2, 4}, {5, 4, 3, 3, 4, 4, 5}, {6, 8, 1, 2, 4, 3, 3}};
+		data=scaleData(data);
 		machine.buildProblem(x, data);
 
 		if (machine.svm instanceof BinaryClassificationSVM) {
 			machine.svm=new MultiClassificationSVM((BinaryClassificationSVM)machine.svm);
 		}
 		machine.train();
+		
+		CrossValidationResults results=machine.svm.performCrossValidation(machine.problem, machine.param);
+		System.out.println("accuracy: "+results.accuracy()+", "+results.accuracyGivenClassified());
+		System.out.println(results.toString());
+	}
+	
+	public static float[][] scaleData(float[][] data) {
+		float[] min=new float[data[0].length];
+		Arrays.fill(min, Float.MAX_VALUE);
+		float[] max=new float[data[0].length];
+		Arrays.fill(max, -Float.MAX_VALUE);
+		for (int i=0; i<data.length; i++) {
+			for (int j=0; j<data[i].length; j++) {
+				if (data[i][j]>max[j]) {
+					max[j]=data[i][j];
+				}
+				if (data[i][j]<min[j]) {
+					min[j]=data[i][j];
+				}
+			}
+		}
+		float[] denominator=new float[data[0].length];
+		for (int i=0; i<denominator.length; i++) {
+			denominator[i]=max[i]-min[i];
+		}
+		
+		float[][] newData=new float[data.length][];
+		for (int i=0; i<data.length; i++) {
+			newData[i]=new float[data[i].length];
+			for (int j=0; j<data[i].length; j++) {
+				newData[i][j]=(data[i][j]-min[j])/denominator[j];
+			}
+		}
+		return newData;
 	}
 
 	public void train() {
@@ -93,7 +130,6 @@ public class SupportVectorMachine {
 				problem=new MutableMultiClassProblemImpl<String, SparseVector>(String.class, new StringLabelInverter(), x.length, new NoopScalingModel<SparseVector>());
 			}
 		}
-		MutableRegressionProblemImpl<SparseVector> problem=new MutableRegressionProblemImpl<SparseVector>(data.length);
 		for (int i=0; i<data.length; i++) {
 			SparseVector y=new SparseVector(data[i].length);
 			for (int j=0; j<data.length; j++) {
@@ -102,7 +138,6 @@ public class SupportVectorMachine {
 			}
 			problem.addExampleFloat(y, x[i]);
 		}
-
 	}
 
 	public void buildSVM() {
