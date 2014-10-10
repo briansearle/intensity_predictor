@@ -56,17 +56,17 @@ public class Peptide implements Comparable<Peptide> {
 		return protein;
 	}
 
-	private static char[] aas="ACDEFGHIKLMNPQRSTVWY".toCharArray();
+	private static char[] aas="HCKPWAILN".toCharArray(); //"ACDEFGHIKLMNPQRSTVWY"
 	public double[] getScoreArray() {
 		double ab=PeptideProperties.getAbsorbance(sequence, true);
-		double ai=PeptideProperties.getApliphaticIndex(sequence);
-		double ah=PeptideProperties.getAvgHydropathy(sequence);
+		//double ai=PeptideProperties.getApliphaticIndex(sequence); // really spelt aliphatic
+		//double ah=PeptideProperties.getAvgHydropathy(sequence);
 		double ec=PeptideProperties.getExtinctionCoefficient(sequence, true);
-		double ii=PeptideProperties.getInstabilityIndex(sequence);
-		double ip=PeptideProperties.getIsoelectricPoint(sequence);
+		//double ii=PeptideProperties.getInstabilityIndex(sequence);
+		//double ip=PeptideProperties.getIsoelectricPoint(sequence);
 		double mw=PeptideProperties.getMolecularWeight(sequence);
 		double nc=PeptideProperties.getNetCharge(sequence);
-		double[] properties=new double[] {ab, ai, ah, ec, ii, ip, mw, nc};
+		double[] properties=new double[] {ab, ec,  mw, nc};
 		
 		Map<Character, Double> map=PeptideProperties.getAACompositionChar(sequence);
 		double[] aaArray=new double[aas.length];

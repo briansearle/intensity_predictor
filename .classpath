@@ -39,7 +39,7 @@
 	<classpathentry kind="lib" path="lib/conja-1.061.jar"/>
 	<classpathentry kind="lib" path="lib/dsutils-1.051.jar"/>
 	<classpathentry kind="lib" path="lib/google-collections-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/jlibsvm-0.92-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/jlibsvm-0.92-SNAPSHOT.jar" sourcepath="/Users/searleb/Documents/school/maccoss rotation/workspace/jlibsvm-0.92-SNAPSHOT-sources.jar"/>
 	<classpathentry kind="lib" path="lib/JSAP-2.0a-ds1.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/ml-0.921.jar"/>

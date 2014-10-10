@@ -18,6 +18,7 @@ public class IntensityTsvParser {
 			reader=new BufferedReader(new FileReader(tsv));
 			String line=null;
 			while ((line=reader.readLine())!=null) {
+				if (line.startsWith("#")) continue; // comment
 				StringTokenizer st=new StringTokenizer(line);
 				String accession=st.nextToken();
 				String sequence=st.nextToken();
