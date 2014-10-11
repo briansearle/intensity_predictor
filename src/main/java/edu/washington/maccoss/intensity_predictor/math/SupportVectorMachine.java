@@ -70,11 +70,8 @@ public class SupportVectorMachine {
 		if (machine.svm instanceof BinaryClassificationSVM) {
 			machine.svm=new MultiClassificationSVM((BinaryClassificationSVM)machine.svm);
 		}
-		machine.train();
-		
-		CrossValidationResults results=machine.svm.performCrossValidation(machine.problem, machine.param);
-		System.out.println("accuracy: "+results.accuracy()+", "+results.accuracyGivenClassified());
-		System.out.println(results.toString());
+		SolutionModel model=machine.train();
+		System.out.println(model.getClass());
 	}
 	
 	public static float[][] scaleData(float[][] data) {
@@ -107,8 +104,9 @@ public class SupportVectorMachine {
 		return newData;
 	}
 
-	public void train() {
+	public SolutionModel train() {
 		model=svm.train(problem, param);
+		return model;
 	}
 
 	public void buildProblem(float[] x, float[][] data) {
