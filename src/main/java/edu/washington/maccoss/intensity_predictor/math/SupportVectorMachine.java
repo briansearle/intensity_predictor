@@ -2,6 +2,7 @@ package edu.washington.maccoss.intensity_predictor.math;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import edu.berkeley.compbio.jlibsvm.ImmutableSvmParameter;
@@ -21,8 +22,10 @@ import edu.berkeley.compbio.jlibsvm.kernel.PolynomialKernel;
 import edu.berkeley.compbio.jlibsvm.kernel.PrecomputedKernel;
 import edu.berkeley.compbio.jlibsvm.kernel.SigmoidKernel;
 import edu.berkeley.compbio.jlibsvm.labelinverter.StringLabelInverter;
+import edu.berkeley.compbio.jlibsvm.multi.MultiClassModel;
 import edu.berkeley.compbio.jlibsvm.multi.MultiClassificationSVM;
 import edu.berkeley.compbio.jlibsvm.multi.MutableMultiClassProblemImpl;
+import edu.berkeley.compbio.jlibsvm.multi.VotingResult;
 import edu.berkeley.compbio.jlibsvm.oneclass.OneClassSVC;
 import edu.berkeley.compbio.jlibsvm.regression.EpsilonSVR;
 import edu.berkeley.compbio.jlibsvm.regression.MutableRegressionProblemImpl;
@@ -65,12 +68,21 @@ public class SupportVectorMachine {
 		float[] x= {0, 0, 1, 1, 2, 2};
 		float[][] data=new float[][] { {5, 6, 5, 1, 7, 6, 4}, {4, 2, 3, 2, 8, 5, 5}, {2, 3, 4, 1, 7, 7, 6}, {9, 7, 2, 2, 3, 2, 4}, {5, 4, 3, 3, 4, 4, 5}, {6, 8, 1, 2, 4, 3, 3}};
 		data=scaleData(data);
-		machine.buildProblem(x, data);
+		MutableSvmProblem problem=machine.buildProblem(x, data);
 
 		if (machine.svm instanceof BinaryClassificationSVM) {
 			machine.svm=new MultiClassificationSVM((BinaryClassificationSVM)machine.svm);
 		}
 		SolutionModel model=machine.train();
+		
+		if (model instanceof MultiClassModel) {
+			MultiClassModel mcm=(MultiClassModel)model;
+			for (Object p : problem.getExamples().keySet()) {
+				VotingResult result=mcm.predictLabelWithQuality(p);
+				System.out.println("Problem: "+p);
+				System.out.println("\t"+result.getBestLabel()+" --> "+result.getBestOneVsAllProbability()+", "+result.getBestVoteProportion());
+			}
+		}
 		System.out.println(model.getClass());
 	}
 	
@@ -109,7 +121,7 @@ public class SupportVectorMachine {
 		return model;
 	}
 
-	public void buildProblem(float[] x, float[][] data) {
+	public MutableSvmProblem buildProblem(float[] x, float[][] data) {
 
 		// build problem
 		if (svm instanceof RegressionSVM) {
@@ -136,6 +148,8 @@ public class SupportVectorMachine {
 			}
 			problem.addExampleFloat(y, x[i]);
 		}
+		
+		return problem;
 	}
 
 	public void buildSVM() {

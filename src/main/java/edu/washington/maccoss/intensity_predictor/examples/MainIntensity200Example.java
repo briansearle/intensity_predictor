@@ -7,12 +7,12 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import edu.berkeley.compbio.jlibsvm.SvmProblem;
-import edu.berkeley.compbio.jlibsvm.regression.MutableRegressionProblemImpl;
+import edu.washington.maccoss.intensity_predictor.math.General;
 import edu.washington.maccoss.intensity_predictor.math.NaiveBayes;
 import edu.washington.maccoss.intensity_predictor.parsers.IntensityTsvParser;
-import edu.washington.maccoss.intensity_predictor.structures.Peptide;
+import edu.washington.maccoss.intensity_predictor.structures.AbstractPeptide;
 import edu.washington.maccoss.intensity_predictor.structures.Protein;
+import gnu.trove.list.array.TDoubleArrayList;
 
 public class MainIntensity200Example {
 
@@ -20,9 +20,21 @@ public class MainIntensity200Example {
 		DecimalFormat formatter=new DecimalFormat("0.00");
 		try {
 			//URI uri=IntensityTsvParser.class.getResource("/intensity_200.xls").toURI();
-			URI uri=IntensityTsvParser.class.getResource("/sprg_peptides.txt").toURI();
+			//URI uri=IntensityTsvParser.class.getResource("/sprg_peptides.txt").toURI();
+			URI uri=MainIntensity200Example.class.getResource("/jarrett1600.txt").toURI();
+			
 			File f=new File(uri);
 			ArrayList<Protein> proteins=IntensityTsvParser.parseTSV(f);
+
+			TDoubleArrayList intensityList=new TDoubleArrayList();
+			for (Protein protein : proteins) {
+				for (AbstractPeptide peptide : protein.getPeptides()) {
+					intensityList.add(peptide.getIntensity());
+				}
+			}
+			double[] intensityArray=intensityList.toArray();
+			double q1=General.getPercentile(intensityArray, 0.25);
+			double q3=General.getPercentile(intensityArray, 0.75);
 			
 			//MutableRegressionProblemImpl<Float>  
 			
@@ -30,14 +42,13 @@ public class MainIntensity200Example {
 			ArrayList<double[]> lowScores=new ArrayList<double[]>();
 			for (Protein protein : proteins) {
 				float totalIntensity=protein.getSummedIntensity();
-				ArrayList<Peptide> peptides=protein.getPeptides();
+				ArrayList<AbstractPeptide> peptides=protein.getPeptides();
 				int peptideCount=peptides.size();
 
-				for (Peptide peptide : peptides) {
-					float predictorScore=peptide.getPredictorScore(totalIntensity, peptideCount);
-					if (peptide.getIntensity()>=2.0f) {
+				for (AbstractPeptide peptide : peptides) {
+					if (peptide.getIntensity()>=q3) {
 						highScores.add(peptide.getScoreArray());
-					} else if (peptide.getIntensity()<=0.5f) {
+					} else if (peptide.getIntensity()<=q1) {
 						lowScores.add(peptide.getScoreArray());
 					}
 				}
@@ -46,19 +57,19 @@ public class MainIntensity200Example {
 			System.out.println(highScores.size()+" / "+lowScores.size());
 
 			NaiveBayes bayes=NaiveBayes.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]));
-			System.out.println(bayes);
+			//LinearDiscriminantAnalysis lda=LinearDiscriminantAnalysis.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]));
 			
 			for (Protein protein : proteins) {
 				// System.out.println(protein.getAccessionNumber());
 				float totalIntensity=protein.getSummedIntensity();
-				ArrayList<Peptide> peptides=protein.getPeptides();
+				ArrayList<AbstractPeptide> peptides=protein.getPeptides();
 				int peptideCount=peptides.size();
 				Collections.sort(peptides);
 				Collections.reverse(peptides);
 
-				for (Peptide peptide : peptides) {
-					float predictorScore=peptide.getPredictorScore(totalIntensity, peptideCount);
+				for (AbstractPeptide peptide : peptides) {
 					double logLikelihood=bayes.getLogLikelihood(peptide.getScoreArray());
+					//double logLikelihood=lda.getScore(peptide.getScoreArray());
 					System.out.println(protein.getAccessionNumber()+"\t"+peptide.getSequence()+"\t"+formatter.format(100.0f*peptide.getIntensity()/totalIntensity)+"%\t"+peptide.getIntensity()+"\t"
 							+logLikelihood);
 				}
