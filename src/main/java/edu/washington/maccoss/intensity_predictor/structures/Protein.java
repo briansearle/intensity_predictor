@@ -5,26 +5,33 @@ import java.util.HashMap;
 
 public class Protein {
 	private final String accessionNumber;
-	private final HashMap<String, Peptide> peptides;
+	private final HashMap<String, AbstractPeptide> peptides;
 
 	public Protein(String accessionNumber) {
 		this.accessionNumber=accessionNumber;
-		this.peptides=new HashMap<String, Peptide>();
+		this.peptides=new HashMap<String, AbstractPeptide>();
 	}
 
 	public String getAccessionNumber() {
 		return accessionNumber;
 	}
 
-	public ArrayList<Peptide> getPeptides() {
-		return new ArrayList<Peptide>(peptides.values());
+	public ArrayList<AbstractPeptide> getPeptides() {
+		return new ArrayList<AbstractPeptide>(peptides.values());
 	}
 
-	public Peptide addPeptide(String sequence, float intensity, byte charge) {
-		String key=Peptide.stripMods(sequence);
-		Peptide peptide=peptides.get(key);
+	public AbstractPeptide addPeptide(String sequence, float intensity, byte charge) {
+		return addPeptide(sequence, intensity, charge, null);
+	}
+	public AbstractPeptide addPeptide(String sequence, float intensity, byte charge, double[] scoreArray) {
+		String key=AbstractPeptide.stripMods(sequence);
+		AbstractPeptide peptide=peptides.get(key);
 		if (peptide==null) {
-			peptide=new Peptide(sequence+"_+"+charge, intensity, this);
+			if (scoreArray!=null) {
+				peptide=new PeptideWithScores(sequence+"_+"+charge, intensity, this, scoreArray);
+			} else {
+				peptide=new Peptide(sequence+"_+"+charge, intensity, this);
+			}
 		} else {
 			peptide.maybeAddForm(sequence+"_+"+charge, intensity);
 		}
@@ -34,7 +41,7 @@ public class Protein {
 
 	public float getSummedIntensity() {
 		float intensity=0.0f;
-		for (Peptide peptide : peptides.values()) {
+		for (AbstractPeptide peptide : peptides.values()) {
 			intensity+=peptide.getIntensity();
 		}
 		return intensity;
