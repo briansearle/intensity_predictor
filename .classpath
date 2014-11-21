@@ -50,7 +50,7 @@
 	<classpathentry kind="lib" path="lib/trees-1.031.jar"/>
 	<classpathentry kind="lib" path="lib/neuroph-adapters-2.9.jar"/>
 	<classpathentry kind="lib" path="lib/neuroph-contrib-2.9.jar"/>
-	<classpathentry kind="lib" path="lib/neuroph-core-2.9.jar"/>
+	<classpathentry kind="lib" path="lib/neuroph-core-2.9.jar" sourcepath="/Users/searleb/Documents/school/maccoss rotation/workspace/neuroph-src"/>
 	<classpathentry kind="lib" path="lib/neuroph-imgrec-2.9.jar"/>
 	<classpathentry kind="lib" path="lib/neuroph-ocr-2.9.jar"/>
 	<classpathentry kind="lib" path="lib/neuroph-samples-2.9.jar"/>
