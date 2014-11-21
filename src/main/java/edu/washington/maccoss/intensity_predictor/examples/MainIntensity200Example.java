@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
 import edu.washington.maccoss.intensity_predictor.math.General;
 import edu.washington.maccoss.intensity_predictor.math.NaiveBayes;
 import edu.washington.maccoss.intensity_predictor.parsers.IntensityTsvParser;
@@ -56,8 +57,9 @@ public class MainIntensity200Example {
 			
 			System.out.println(highScores.size()+" / "+lowScores.size());
 
-			NaiveBayes bayes=NaiveBayes.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]));
+			//NaiveBayes bayes=NaiveBayes.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]));
 			//LinearDiscriminantAnalysis lda=LinearDiscriminantAnalysis.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]));
+			BackPropNeuralNetwork lda=BackPropNeuralNetwork.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]));
 			
 			for (Protein protein : proteins) {
 				// System.out.println(protein.getAccessionNumber());
@@ -68,8 +70,8 @@ public class MainIntensity200Example {
 				Collections.reverse(peptides);
 
 				for (AbstractPeptide peptide : peptides) {
-					double logLikelihood=bayes.getLogLikelihood(peptide.getScoreArray());
-					//double logLikelihood=lda.getScore(peptide.getScoreArray());
+					//double logLikelihood=bayes.getLogLikelihood(peptide.getScoreArray());
+					double logLikelihood=lda.getScore(peptide.getScoreArray());
 					System.out.println(protein.getAccessionNumber()+"\t"+peptide.getSequence()+"\t"+formatter.format(100.0f*peptide.getIntensity()/totalIntensity)+"%\t"+peptide.getIntensity()+"\t"
 							+logLikelihood);
 				}

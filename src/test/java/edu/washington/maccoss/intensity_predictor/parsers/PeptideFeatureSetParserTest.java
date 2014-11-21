@@ -10,6 +10,7 @@ import org.apache.commons.math.stat.descriptive.moment.Mean;
 import org.apache.commons.math.stat.descriptive.rank.Max;
 import org.apache.commons.math.stat.descriptive.rank.Min;
 
+import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
 import edu.washington.maccoss.intensity_predictor.math.General;
 import edu.washington.maccoss.intensity_predictor.math.LinearDiscriminantAnalysis;
 import edu.washington.maccoss.intensity_predictor.structures.AbstractPeptide;
@@ -56,6 +57,8 @@ public class PeptideFeatureSetParserTest extends TestCase {
 			features.add(new ScoredArray(0.0, values[i], i));
 		}
 		
+		// A type of Minimum-redundancy-maximum-relevance (mRMR) feature selection algorithm:
+		// http://en.wikipedia.org/wiki/Feature_selection#Minimum-redundancy-maximum-relevance_.28mRMR.29_feature_selection
 		ArrayList<ScoredArray> bestFeatures=new ArrayList<ScoredArray>();
 		for (int iter=0; iter<TOTAL_FEATURES_CONSIDERED; iter++) {
 			ArrayList<ScoredArray> arrays=new ArrayList<ScoredArray>();
@@ -93,10 +96,15 @@ public class PeptideFeatureSetParserTest extends TestCase {
 		}
 		
 		LinearDiscriminantAnalysis lda=LinearDiscriminantAnalysis.buildModel(goodFeatures.toArray(new double[goodFeatures.size()][]), badFeatures.toArray(new double[badFeatures.size()][]));
-		
-		for (AbstractPeptide peptide : peptides) {
-			double logLikelihood=lda.getScore(peptide.getScoreArray());
-			System.out.println(peptide.getSequence()+"\t"+peptide.getIntensity()+"\t"+logLikelihood);
+		BackPropNeuralNetwork backprop=BackPropNeuralNetwork.buildModel(goodFeatures.toArray(new double[goodFeatures.size()][]), badFeatures.toArray(new double[badFeatures.size()][]));
+		for (int i=0; i<originalIntensities.length; i++) {
+			double[] featureArray=new double[TOTAL_FEATURES_CONSIDERED];
+			for (int j=0; j<bestFeatures.size(); j++) {
+				featureArray[j]=bestFeatures.get(j).array[i];
+			}
+			double logLikelihood=lda.getScore(featureArray);
+			double prob=backprop.getScore(featureArray);
+			System.out.println(originalIntensities[i]+"\t"+logLikelihood+"\t"+prob);
 		}
 	}
 
