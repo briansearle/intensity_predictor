@@ -20,9 +20,9 @@ public class MainIntensity200Example {
 	public static void main(String[] args) {
 		DecimalFormat formatter=new DecimalFormat("0.00");
 		try {
-			//URI uri=IntensityTsvParser.class.getResource("/intensity_200.xls").toURI();
+			URI uri=IntensityTsvParser.class.getResource("/jim_intensities.xls").toURI();
 			//URI uri=IntensityTsvParser.class.getResource("/sprg_peptides.txt").toURI();
-			URI uri=MainIntensity200Example.class.getResource("/jarrett1600.txt").toURI();
+			//URI uri=MainIntensity200Example.class.getResource("/jarrett1600.txt").toURI();
 			
 			File f=new File(uri);
 			ArrayList<Protein> proteins=IntensityTsvParser.parseTSV(f);

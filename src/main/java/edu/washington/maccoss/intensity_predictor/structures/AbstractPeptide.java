@@ -3,12 +3,9 @@ package edu.washington.maccoss.intensity_predictor.structures;
 import java.util.HashMap;
 
 public abstract class AbstractPeptide implements Comparable<AbstractPeptide> {
-
-	private static final double LOG2=Math.log(2.0);
 	protected final String sequence;
 	protected final Protein protein;
 	protected final HashMap<String, Float> modifiedForms;
-	protected static char[] aas="HCKPWAILN".toCharArray();
 
 	public AbstractPeptide(String sequence, float intensity, Protein protein) {
 		this.sequence=stripMods(sequence);

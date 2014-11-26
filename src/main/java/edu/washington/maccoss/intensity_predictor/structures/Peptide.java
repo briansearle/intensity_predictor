@@ -6,6 +6,7 @@ import org.biojava3.aaproperties.PeptideProperties;
 
 
 public class Peptide extends AbstractPeptide {
+	protected static char[] aas="HCKPWAILN".toCharArray();
 	
 	public Peptide(String sequence, float intensity, Protein protein) {
 		super(sequence, intensity, protein);
