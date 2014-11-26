@@ -5,6 +5,7 @@ import org.neuroph.core.data.DataSet;
 import org.neuroph.core.data.DataSetRow;
 import org.neuroph.core.input.WeightedSum;
 import org.neuroph.nnet.MultiLayerPerceptron;
+import org.neuroph.nnet.NeuroFuzzyPerceptron;
 import org.neuroph.nnet.learning.BackPropagation;
 import org.neuroph.util.NeuronProperties;
 import org.neuroph.util.TransferFunctionType;
@@ -34,7 +35,9 @@ public class BackPropNeuralNetwork {
 		positiveData=normMF[0];
 		negativeData=normMF[1];
 
-		NeuralNetwork<BackPropagation> neuralNetwork=new MultiLayerPerceptron(min.length, Math.round((min.length+1.0f)*2.0f/3.0f), 1);
+		int numHiddenNodes=Math.round((min.length+1.0f)*2.0f/3.0f);
+		numHiddenNodes=min.length;
+		NeuralNetwork<BackPropagation> neuralNetwork=new MultiLayerPerceptron(min.length, numHiddenNodes, 1);
 
 		BackPropagation learningRule=new BackPropagation();
 		learningRule.setMaxIterations(20000);

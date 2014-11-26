@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
+import edu.washington.maccoss.intensity_predictor.structures.AbstractPeptide;
 import edu.washington.maccoss.intensity_predictor.structures.Protein;
 
 public class IntensityTsvParser {
@@ -21,7 +22,7 @@ public class IntensityTsvParser {
 				if (line.startsWith("#")) continue; // comment
 				StringTokenizer st=new StringTokenizer(line);
 				String accession=st.nextToken();
-				String sequence=st.nextToken();
+				String sequence=st.nextToken();System.out.println(AbstractPeptide.stripMods(sequence));
 				String intensityString=st.nextToken();
 				String chargeString=st.nextToken();
 				float intensity=Float.parseFloat(intensityString);
