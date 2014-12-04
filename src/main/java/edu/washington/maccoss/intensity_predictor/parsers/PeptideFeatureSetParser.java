@@ -596,5 +596,10 @@ public class PeptideFeatureSetParser {
 		"AVG_Radius_of_gyration_of_side_chain_Levitt_1976",
 		"AVG_Weights_for_alpha-helix_at_the_window_position_of_6_Qian-Sejnowski_1988",
 		"AVG_Information_measure_for_pleated-sheet_Robson-Suzuki_1976"};
+		//,
+		//"A Composition", "C Composition", "D Composition", "E Composition", "F Composition", 
+		//"G Composition", "H Composition", "I Composition", "K Composition", "L Composition", 
+		//"M Composition", "N Composition", "P Composition", "Q Composition", "R Composition", 
+		//"S Composition", "T Composition", "V Composition", "W Composition", "Y Composition"};
 
 }

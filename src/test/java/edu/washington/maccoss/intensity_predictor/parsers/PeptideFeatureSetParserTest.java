@@ -34,7 +34,7 @@ public class PeptideFeatureSetParserTest extends TestCase {
 		}
 		
 		ArrayList<AbstractPeptide> jarrettPeptides=getJarrettPeptides();
-		assertEquals(1256, jarrettPeptides.size());
+		assertEquals(1255, jarrettPeptides.size());
 		for (AbstractPeptide peptide : jarrettPeptides) {
 			assertEquals(PeptideFeatureSetParser.scoreNames.length, peptide.getScoreArray().length);	
 		}
@@ -83,7 +83,7 @@ public class PeptideFeatureSetParserTest extends TestCase {
 			trainingFeatures.add(trainingValues[index]);
 		}
 		
-		/*for (int i=0; i<trainingIntensities.length; i++) {
+		for (int i=0; i<trainingIntensities.length; i++) {
 			double[] featureArray=new double[TOTAL_FEATURES_CONSIDERED];
 			for (int j=0; j<trainingFeatures.size(); j++) {
 				featureArray[j]=trainingFeatures.get(j)[i];
@@ -93,11 +93,11 @@ public class PeptideFeatureSetParserTest extends TestCase {
 			if (prob==0.0) prob=ZERO_PLUS_BIT;
 			double score=Math.log10(prob)-Math.log10(1.0-prob);
 			
-			AbstractPeptide peptide=testingPeptides.get(i);
-			System.out.println(peptide.getSequence()+"\t"+trainingIntensities[i]+"\t"+prob+"\t"+score);
+			AbstractPeptide peptide=trainingPeptides.get(i);
+			System.out.println(peptide.getSequence()+"\t"+trainingIntensities[i]+"\t"+score+"\t"+prob);
 		}
 		
-		System.out.println();*/
+		System.out.println("\n\n");
 
 		ArrayList<double[]> testingFeatures=new ArrayList<double[]>();
 		for (int index : bestFeatureIndicies.toArray()) {
@@ -115,7 +115,7 @@ public class PeptideFeatureSetParserTest extends TestCase {
 			double score=Math.log10(prob)-Math.log10(1.0-prob);
 
 			AbstractPeptide peptide=testingPeptides.get(i);
-			System.out.println(peptide.getSequence()+"\t"+testingIntensities[i]+"\t"+prob+"\t"+score);
+			System.out.println(peptide.getSequence()+"\t"+testingIntensities[i]+"\t"+score+"\t"+prob);
 		}
 	}
 	private BackPropNeuralNetwork getNeuralNetwork(double[] originalIntensities, double[][] values, TIntArrayList bestFeatureIndicies) {
@@ -177,6 +177,9 @@ public class PeptideFeatureSetParserTest extends TestCase {
 			for (int i=0; i<features.size(); i++) {
 				double correlation=getCorrelation(intensities, features.get(i).array);
 				ScoredArray scoredArray=new ScoredArray(correlation, features.get(i).array, features.get(i).index);
+				if (scoredArray.getName().equals("P Composition")) {
+					System.out.println("\tP: "+scoredArray.toString());
+				}
 				arrays.add(scoredArray);
 			}
 			Collections.sort(arrays);
@@ -187,7 +190,7 @@ public class PeptideFeatureSetParserTest extends TestCase {
 			
 			features=arrays;
 			bestFeatureIndicies.add(best.index);
-			System.out.println(best.index+"\t"+best);
+			System.out.println(best.index+"\t"+best.score+"\t"+best.toString());
 		}
 		return bestFeatureIndicies;
 	}
@@ -287,6 +290,9 @@ public class PeptideFeatureSetParserTest extends TestCase {
 			numerator+=xDiff*yDiff;
 			xSS+=xDiff*xDiff;
 			ySS+=yDiff*yDiff;
+		}
+		if (xSS==0||ySS==0) {
+			return 0.0;
 		}
 		return numerator/Math.sqrt(xSS*ySS);
 	}
