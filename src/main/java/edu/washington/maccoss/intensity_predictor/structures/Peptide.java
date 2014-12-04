@@ -24,6 +24,16 @@ public class Peptide extends AbstractPeptide {
 		double nc=PeptideProperties.getNetCharge(sequence);
 		double[] properties=new double[] {ab, ec,  mw, nc};
 		
+		double[] aaArray=getAAComposition(sequence, aas);
+		
+		double[] scores=new double[properties.length+aaArray.length];
+		System.arraycopy(properties, 0, scores, 0, properties.length);
+		System.arraycopy(aaArray, 0, scores, properties.length, aaArray.length);
+		
+		return scores;
+	}
+
+	public static double[] getAAComposition(String sequence, char[] aas) {
 		Map<Character, Double> map=PeptideProperties.getAACompositionChar(sequence);
 		double[] aaArray=new double[aas.length];
 		for (int i=0; i<aaArray.length; i++) {
@@ -34,11 +44,6 @@ public class Peptide extends AbstractPeptide {
 				aaArray[i]=value;
 			}
 		}
-		
-		double[] scores=new double[properties.length+aaArray.length];
-		System.arraycopy(properties, 0, scores, 0, properties.length);
-		System.arraycopy(aaArray, 0, scores, properties.length, aaArray.length);
-		
-		return scores;
+		return aaArray;
 	}
 }
