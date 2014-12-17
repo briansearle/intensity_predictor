@@ -2,6 +2,10 @@ package edu.washington.maccoss.intensity_predictor.properties;
 
 
 public class MassProperty extends AbstractProperty {
+	@Override
+	public String toString() {
+		return "Peptide Mass";
+	}
 
 	public MassProperty() {
 		super(false);

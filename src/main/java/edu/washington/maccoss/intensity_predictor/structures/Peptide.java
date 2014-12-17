@@ -1,12 +1,32 @@
 package edu.washington.maccoss.intensity_predictor.structures;
 
-import java.util.Map;
-
-import org.biojava3.aaproperties.PeptideProperties;
+import edu.washington.maccoss.intensity_predictor.properties.C1Property;
+import edu.washington.maccoss.intensity_predictor.properties.FractionalOccurrenceOfA0iProperty;
+import edu.washington.maccoss.intensity_predictor.properties.FrequencyOfAlphaHelixProperty;
+import edu.washington.maccoss.intensity_predictor.properties.GibbsEnergyOfUnfoldingProperty;
+import edu.washington.maccoss.intensity_predictor.properties.LengthProperty;
+import edu.washington.maccoss.intensity_predictor.properties.LinkerPropensityProperty;
+import edu.washington.maccoss.intensity_predictor.properties.MassProperty;
+import edu.washington.maccoss.intensity_predictor.properties.NumberBasicProperty;
+import edu.washington.maccoss.intensity_predictor.properties.PositiveChargeProperty;
+import edu.washington.maccoss.intensity_predictor.properties.PropertyInterface;
+import edu.washington.maccoss.intensity_predictor.properties.SimilarityToCytoplasmicProteinsProperty;
 
 
 public class Peptide extends AbstractPeptide {
-	protected static char[] aas="HCKPWAILN".toCharArray();
+	PropertyInterface[] properties=new PropertyInterface[] {
+			new MassProperty(),
+			new C1Property(),
+			new NumberBasicProperty(),
+			new LinkerPropensityProperty(),
+			new GibbsEnergyOfUnfoldingProperty(),
+			new SimilarityToCytoplasmicProteinsProperty(),
+			new FrequencyOfAlphaHelixProperty(),
+			new FractionalOccurrenceOfA0iProperty(),
+			new LengthProperty(),
+			new PositiveChargeProperty()
+	};
+	double[] scores=null;
 	
 	public Peptide(String sequence, float intensity, Protein protein) {
 		super(sequence, intensity, protein);
@@ -14,36 +34,12 @@ public class Peptide extends AbstractPeptide {
 
 	@Override
 	public double[] getScoreArray() {
-		double ab=PeptideProperties.getAbsorbance(sequence, true);
-		//double ai=PeptideProperties.getApliphaticIndex(sequence); // really spelt aliphatic
-		//double ah=PeptideProperties.getAvgHydropathy(sequence);
-		double ec=PeptideProperties.getExtinctionCoefficient(sequence, true);
-		//double ii=PeptideProperties.getInstabilityIndex(sequence);
-		//double ip=PeptideProperties.getIsoelectricPoint(sequence);
-		double mw=PeptideProperties.getMolecularWeight(sequence);
-		double nc=PeptideProperties.getNetCharge(sequence);
-		double[] properties=new double[] {ab, ec,  mw, nc};
+		if (scores!=null) return scores;
 		
-		double[] aaArray=getAAComposition(sequence, aas);
-		
-		double[] scores=new double[properties.length+aaArray.length];
-		System.arraycopy(properties, 0, scores, 0, properties.length);
-		System.arraycopy(aaArray, 0, scores, properties.length, aaArray.length);
-		
-		return scores;
-	}
-
-	public static double[] getAAComposition(String sequence, char[] aas) {
-		Map<Character, Double> map=PeptideProperties.getAACompositionChar(sequence);
-		double[] aaArray=new double[aas.length];
-		for (int i=0; i<aaArray.length; i++) {
-			Double value=map.get(aas[i]);
-			if (value==null) {
-				aaArray[i]=0.0;
-			} else {
-				aaArray[i]=value;
-			}
+		scores=new double[properties.length];
+		for (int i=0; i<properties.length; i++) {
+			scores[i]=properties[i].getProperty(sequence);
 		}
-		return aaArray;
+		return scores;
 	}
 }
