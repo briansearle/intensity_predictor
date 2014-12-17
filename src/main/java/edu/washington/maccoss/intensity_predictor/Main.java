@@ -30,7 +30,13 @@ public class Main {
 		File peptidesWithIntensityFile=new File(args[0]);
 		File neuralNetworkFile=new File(args[1]);
 		
-		BackPropNeuralNetwork backprop=buildAndSaveNN(peptidesWithIntensityFile, neuralNetworkFile);
+		buildAndSaveNN(peptidesWithIntensityFile, neuralNetworkFile);
+		
+		BackPropNeuralNetwork readbp=NeuralNetworkData.readNetwork(neuralNetworkFile);
+		System.out.println("read out: "+readbp.getPropertyList().size());
+
+		//FIXME normalization!
+		readbp.getScore("PEPTIDEK");
 	}
 
 	private static BackPropNeuralNetwork buildAndSaveNN(File peptidesWithIntensityFile, File neuralNetworkFile) {

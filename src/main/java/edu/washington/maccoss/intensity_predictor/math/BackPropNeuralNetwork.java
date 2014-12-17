@@ -10,8 +10,12 @@ import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.nnet.learning.BackPropagation;
 
 import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
+import gnu.trove.list.array.TDoubleArrayList;
 
 public class BackPropNeuralNetwork {
+	public static final double ONE_MINUS_BIT=Double.longBitsToDouble(Double.doubleToLongBits(1.0)-1);
+	public static final double ZERO_PLUS_BIT=1.0-ONE_MINUS_BIT;
+	
 	NeuralNetwork<BackPropagation> neuralNetwork;
 	double[] min;
 	double[] max;
@@ -23,7 +27,19 @@ public class BackPropNeuralNetwork {
 		this.max=max;
 		this.propertyList=finalPropertyList;
 	}
-	public double getScore(double[] data) {
+	public double getScore(String sequence) {
+		TDoubleArrayList features=new TDoubleArrayList();
+		for (AbstractProperty property : propertyList) {
+			features.add(property.getProperty(sequence));
+		}
+		double prob=getProbability(features.toArray());
+		if (prob==1.0) prob=ONE_MINUS_BIT;
+		if (prob==0.0) prob=ZERO_PLUS_BIT;
+		double score=Math.log10(prob)-Math.log10(1.0-prob);
+		return score;
+	}
+	
+	public double getProbability(double[] data) {
 		neuralNetwork.setInput(normalize(data, min, max));
 		neuralNetwork.calculate();
 		double[] networkOutput=neuralNetwork.getOutput();

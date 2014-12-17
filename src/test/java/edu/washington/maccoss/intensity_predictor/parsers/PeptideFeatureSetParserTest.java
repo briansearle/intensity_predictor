@@ -16,8 +16,6 @@ import edu.washington.maccoss.intensity_predictor.structures.Protein;
 import gnu.trove.list.array.TIntArrayList;
 
 public class PeptideFeatureSetParserTest extends TestCase {
-	private static final double ONE_MINUS_BIT=Double.longBitsToDouble(Double.doubleToLongBits(1.0)-1);
-	private static final double ZERO_PLUS_BIT=1.0-ONE_MINUS_BIT;
 
 	public void testParsing() throws Exception {
 		ArrayList<AbstractPeptide> sprgPeptides=getSPRGPeptides();
@@ -84,9 +82,9 @@ public class PeptideFeatureSetParserTest extends TestCase {
 			for (int j=0; j<trainingFeatures.size(); j++) {
 				featureArray[j]=trainingFeatures.get(j)[i];
 			}
-			double prob=backprop.getScore(featureArray);
-			if (prob==1.0) prob=ONE_MINUS_BIT;
-			if (prob==0.0) prob=ZERO_PLUS_BIT;
+			double prob=backprop.getProbability(featureArray);
+			if (prob==1.0) prob=BackPropNeuralNetwork.ONE_MINUS_BIT;
+			if (prob==0.0) prob=BackPropNeuralNetwork.ZERO_PLUS_BIT;
 			double score=Math.log10(prob)-Math.log10(1.0-prob);
 			
 			AbstractPeptide peptide=trainingPeptides.get(i);
@@ -105,9 +103,9 @@ public class PeptideFeatureSetParserTest extends TestCase {
 			for (int j=0; j<testingFeatures.size(); j++) {
 				featureArray[j]=testingFeatures.get(j)[i];
 			}
-			double prob=backprop.getScore(featureArray);
-			if (prob==1.0) prob=ONE_MINUS_BIT;
-			if (prob==0.0) prob=ZERO_PLUS_BIT;
+			double prob=backprop.getProbability(featureArray);
+			if (prob==1.0) prob=BackPropNeuralNetwork.ONE_MINUS_BIT;
+			if (prob==0.0) prob=BackPropNeuralNetwork.ZERO_PLUS_BIT;
 			double score=Math.log10(prob)-Math.log10(1.0-prob);
 
 			AbstractPeptide peptide=testingPeptides.get(i);
