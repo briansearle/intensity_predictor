@@ -72,7 +72,7 @@ public class MainIntensity200Example {
 
 				for (AbstractPeptide peptide : peptides) {
 					//double logLikelihood=bayes.getLogLikelihood(peptide.getScoreArray());
-					double logLikelihood=lda.getScore(peptide.getScoreArray());
+					double logLikelihood=lda.getProbability(peptide.getScoreArray());
 					System.out.println(protein.getAccessionNumber()+"\t"+peptide.getSequence()+"\t"+formatter.format(100.0f*peptide.getIntensity()/totalIntensity)+"%\t"+peptide.getIntensity()+"\t"
 							+logLikelihood);
 				}
