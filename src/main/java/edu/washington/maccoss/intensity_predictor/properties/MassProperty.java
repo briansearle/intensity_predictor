@@ -1,7 +1,11 @@
 package edu.washington.maccoss.intensity_predictor.properties;
 
+import java.io.Serializable;
 
-public class MassProperty extends AbstractProperty {
+
+public class MassProperty extends AbstractProperty implements Serializable {
+	private static final long serialVersionUID=1L;
+	
 	@Override
 	public String toString() {
 		return "Peptide Mass";

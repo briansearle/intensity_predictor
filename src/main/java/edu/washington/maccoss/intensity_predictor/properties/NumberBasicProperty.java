@@ -1,6 +1,10 @@
 package edu.washington.maccoss.intensity_predictor.properties;
 
-public class NumberBasicProperty extends AbstractProperty {
+import java.io.Serializable;
+
+public class NumberBasicProperty extends AbstractProperty implements Serializable {
+	private static final long serialVersionUID=1L;
+	
 	@Override
 	public String toString() {
 		return "Number of Basic Residues";

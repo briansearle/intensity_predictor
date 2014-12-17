@@ -1,5 +1,6 @@
 package edu.washington.maccoss.intensity_predictor.math;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.neuroph.core.NeuralNetwork;
@@ -8,15 +9,19 @@ import org.neuroph.core.data.DataSetRow;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.nnet.learning.BackPropagation;
 
+import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
+
 public class BackPropNeuralNetwork {
 	NeuralNetwork<BackPropagation> neuralNetwork;
 	double[] min;
 	double[] max;
+	ArrayList<AbstractProperty> propertyList;
 
-	public BackPropNeuralNetwork(NeuralNetwork<BackPropagation> neuralNetwork, double[] min, double[] max) {
+	public BackPropNeuralNetwork(NeuralNetwork<BackPropagation> neuralNetwork, double[] min, double[] max, ArrayList<AbstractProperty> finalPropertyList) {
 		this.neuralNetwork=neuralNetwork;
 		this.min=min;
 		this.max=max;
+		this.propertyList=finalPropertyList;
 	}
 	public double getScore(double[] data) {
 		neuralNetwork.setInput(normalize(data, min, max));
@@ -30,11 +35,14 @@ public class BackPropNeuralNetwork {
 	public double[] getMin() {
 		return min;
 	}
+	public ArrayList<AbstractProperty> getPropertyList() {
+		return propertyList;
+	}
 	public NeuralNetwork<BackPropagation> getNeuralNetwork() {
 		return neuralNetwork;
 	}
 
-	public static BackPropNeuralNetwork buildModel(double[][] positiveData, double[][] negativeData) {
+	public static BackPropNeuralNetwork buildModel(double[][] positiveData, double[][] negativeData, ArrayList<AbstractProperty> finalPropertyList) {
 		double[][] bounds=getMinMax(positiveData, negativeData);
 		double[] min=bounds[0];
 		double[] max=bounds[1];
@@ -59,7 +67,7 @@ public class BackPropNeuralNetwork {
 		}
 
 		neuralNetwork.learn(trainingSet);
-		return new BackPropNeuralNetwork(neuralNetwork, min, max);
+		return new BackPropNeuralNetwork(neuralNetwork, min, max, finalPropertyList);
 	}
 
 	static double[][][] normalizeMinMax(double[] min, double[] max, double[][]... dataset) {

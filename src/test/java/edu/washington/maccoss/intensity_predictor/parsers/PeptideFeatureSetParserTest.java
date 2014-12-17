@@ -4,19 +4,12 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 import junit.framework.TestCase;
-
-import org.apache.commons.math.stat.descriptive.moment.Mean;
-import org.apache.commons.math.stat.descriptive.rank.Max;
-import org.apache.commons.math.stat.descriptive.rank.Min;
-
 import edu.washington.maccoss.intensity_predictor.NeuralNetworkGenerator;
 import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
 import edu.washington.maccoss.intensity_predictor.math.General;
-import edu.washington.maccoss.intensity_predictor.math.NeuralNetworkData;
+import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
 import edu.washington.maccoss.intensity_predictor.structures.AbstractPeptide;
 import edu.washington.maccoss.intensity_predictor.structures.Peptide;
 import edu.washington.maccoss.intensity_predictor.structures.Protein;
@@ -78,7 +71,7 @@ public class PeptideFeatureSetParserTest extends TestCase {
 		
 		double[][] trainingValues=new double[PeptideFeatureSetParser.scoreNames.length][];
 		TIntArrayList bestFeatureIndicies=NeuralNetworkGenerator.getBestFeatureIndicies(trainingPeptides, trainingIntensities, trainingValues, PeptideFeatureSetParser.scoreNames);
-		BackPropNeuralNetwork backprop=NeuralNetworkGenerator.getNeuralNetwork(trainingIntensities, trainingValues, bestFeatureIndicies);
+		BackPropNeuralNetwork backprop=NeuralNetworkGenerator.getNeuralNetwork(trainingIntensities, trainingValues, bestFeatureIndicies, new ArrayList<AbstractProperty>());
 		//NeuralNetworkData.saveNetwork(backprop, new File("/Users/searleb/tmp/nn"));
 		
 		ArrayList<double[]> trainingFeatures=new ArrayList<double[]>();

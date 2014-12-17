@@ -2,7 +2,7 @@ package edu.washington.maccoss.intensity_predictor;
 
 import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
 import edu.washington.maccoss.intensity_predictor.math.General;
-import edu.washington.maccoss.intensity_predictor.parsers.PeptideFeatureSetParser;
+import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
 import edu.washington.maccoss.intensity_predictor.structures.AbstractPeptide;
 import gnu.trove.list.array.TIntArrayList;
 
@@ -68,7 +68,7 @@ public class NeuralNetworkGenerator {
 		return bestFeatureIndicies;
 	}
 
-	public static BackPropNeuralNetwork getNeuralNetwork(double[] originalIntensities, double[][] values, TIntArrayList bestFeatureIndicies) {
+	public static BackPropNeuralNetwork getNeuralNetwork(double[] originalIntensities, double[][] values, TIntArrayList bestFeatureIndicies, ArrayList<AbstractProperty> finalPropertyList) {
 		ArrayList<double[]> bestFeatures=new ArrayList<double[]>();
 		for (int index : bestFeatureIndicies.toArray()) {
 			bestFeatures.add(values[index]);
@@ -91,7 +91,7 @@ public class NeuralNetworkGenerator {
 			}
 		}
 		
-		BackPropNeuralNetwork backprop=BackPropNeuralNetwork.buildModel(goodFeatures.toArray(new double[goodFeatures.size()][]), badFeatures.toArray(new double[badFeatures.size()][]));
+		BackPropNeuralNetwork backprop=BackPropNeuralNetwork.buildModel(goodFeatures.toArray(new double[goodFeatures.size()][]), badFeatures.toArray(new double[badFeatures.size()][]), finalPropertyList);
 		return backprop;
 	}
 	
