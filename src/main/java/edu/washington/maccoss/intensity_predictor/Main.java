@@ -13,6 +13,7 @@ import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
 import edu.washington.maccoss.intensity_predictor.math.General;
 import edu.washington.maccoss.intensity_predictor.math.NeuralNetworkData;
 import edu.washington.maccoss.intensity_predictor.parsers.AAIndex1Parser;
+import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
 import edu.washington.maccoss.intensity_predictor.properties.LengthProperty;
 import edu.washington.maccoss.intensity_predictor.properties.MassProperty;
 import edu.washington.maccoss.intensity_predictor.properties.NumberAcidicProperty;
@@ -50,7 +51,13 @@ public class Main {
 		
 		double[][] trainingValues=new double[propertyNames.length][];
 		TIntArrayList bestFeatureIndicies=NeuralNetworkGenerator.getBestFeatureIndicies(peptides, trainingIntensities, trainingValues, propertyNames);
-		BackPropNeuralNetwork backprop=NeuralNetworkGenerator.getNeuralNetwork(trainingIntensities, trainingValues, bestFeatureIndicies);
+		
+		ArrayList<AbstractProperty> usedProperties=new ArrayList<AbstractProperty>();
+		for (int index : bestFeatureIndicies.toArray()) {
+			usedProperties.add((AbstractProperty)properties.get(index));
+		}
+		
+		BackPropNeuralNetwork backprop=NeuralNetworkGenerator.getNeuralNetwork(trainingIntensities, trainingValues, bestFeatureIndicies, usedProperties);
 		
 		NeuralNetworkData.saveNetwork(backprop, neuralNetworkFile);
 		return backprop;

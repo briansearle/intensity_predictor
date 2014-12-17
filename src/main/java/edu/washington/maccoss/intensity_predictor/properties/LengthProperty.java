@@ -1,6 +1,14 @@
 package edu.washington.maccoss.intensity_predictor.properties;
 
-public class LengthProperty implements PropertyInterface {
+import java.io.Serializable;
+
+public class LengthProperty extends AbstractProperty implements Serializable {
+	private static final long serialVersionUID=1L;
+	
+	public LengthProperty() {
+		super(false);
+	}
+	
 	@Override
 	public String toString() {
 		return "Peptide Length";

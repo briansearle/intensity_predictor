@@ -1,8 +1,12 @@
 package edu.washington.maccoss.intensity_predictor.parsers;
 
+import java.io.Serializable;
+
 import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
 
-public class ParsedProperty extends AbstractProperty {
+public class ParsedProperty extends AbstractProperty implements Serializable {
+	private static final long serialVersionUID=1L;
+	
 	String name;
 
 	public ParsedProperty(boolean isAverage) {

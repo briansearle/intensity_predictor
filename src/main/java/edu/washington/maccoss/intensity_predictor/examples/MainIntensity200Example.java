@@ -11,6 +11,7 @@ import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
 import edu.washington.maccoss.intensity_predictor.math.General;
 import edu.washington.maccoss.intensity_predictor.math.NaiveBayes;
 import edu.washington.maccoss.intensity_predictor.parsers.IntensityTsvParser;
+import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
 import edu.washington.maccoss.intensity_predictor.structures.AbstractPeptide;
 import edu.washington.maccoss.intensity_predictor.structures.Protein;
 import gnu.trove.list.array.TDoubleArrayList;
@@ -59,7 +60,7 @@ public class MainIntensity200Example {
 
 			//NaiveBayes bayes=NaiveBayes.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]));
 			//LinearDiscriminantAnalysis lda=LinearDiscriminantAnalysis.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]));
-			BackPropNeuralNetwork lda=BackPropNeuralNetwork.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]));
+			BackPropNeuralNetwork lda=BackPropNeuralNetwork.buildModel(highScores.toArray(new double[highScores.size()][]), lowScores.toArray(new double[lowScores.size()][]), new ArrayList<AbstractProperty>());
 			
 			for (Protein protein : proteins) {
 				// System.out.println(protein.getAccessionNumber());

@@ -1,14 +1,22 @@
 package edu.washington.maccoss.intensity_predictor.math;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.nnet.learning.BackPropagation;
+
+import edu.washington.maccoss.intensity_predictor.Logger;
+import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
 
 
 public class NeuralNetworkData {
@@ -16,10 +24,12 @@ public class NeuralNetworkData {
 	private static final String maxArrayName="max array";
 	private static final String nnName="neural_network_classifier.nn";
 	private static final String nnMetaName="neural_network_metadata.nn";
+	private static final String nnPropertiesName="neural_network_properties.nn";
 
 	public static void saveNetwork(BackPropNeuralNetwork nn, File dir) {
 		File classifier=new File(dir, nnName);
 		File metadata=new File(dir, nnMetaName);
+		File properties=new File(dir, nnPropertiesName);
 
 		if (dir.exists()) {
 			if (!dir.isDirectory()) {
@@ -27,6 +37,7 @@ public class NeuralNetworkData {
 			} else {
 				if (classifier.exists()) classifier.delete();
 				if (metadata.exists()) metadata.delete();
+				if (properties.exists()) properties.delete();
 			}
 		} else {
 			dir.mkdirs();
@@ -40,37 +51,73 @@ public class NeuralNetworkData {
 		try {
 			prop.store(new FileOutputStream(metadata), "Neural Network Intensity Predictor Metadata");
 		} catch (FileNotFoundException fnfe) {
-			System.err.println("FileNotFoundException writing properties file.");
-			fnfe.printStackTrace();
+			Logger.writeError("FileNotFoundException writing Neural Network metadata file.");
+			Logger.writeError(fnfe);
 		} catch (IOException ioe) {
-			System.err.println("IOException writing properties file.");
-			ioe.printStackTrace();
+			Logger.writeError("IOException writing Neural Network metadata file.");
+			Logger.writeError(ioe);
 		}
+		
+		ArrayList<AbstractProperty> propertyList=nn.getPropertyList();
+        ObjectOutputStream out = null;
+        try {
+            out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(properties)));
+            out.writeObject(propertyList);
+            out.flush();
+        } catch (IOException ioe) {
+			Logger.writeError("IOException writing Neural Network properties file.");
+			Logger.writeError(ioe);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                }
+            }
+        }
 	}
 
 	public static BackPropNeuralNetwork readNetwork(File dir) {
 		File classifier=new File(dir, nnName);
 		File metadata=new File(dir, nnMetaName);
+		File properties=new File(dir, nnPropertiesName);
 
 		NeuralNetwork<BackPropagation> nn=NeuralNetwork.createFromFile(classifier);
 
 		Properties props=new Properties();
 
+		FileInputStream in=null;
+		ObjectInputStream oistream=null;
 		try {
-			FileInputStream in=new FileInputStream(metadata);
+			in=new FileInputStream(metadata);
 			props.load(in);
 			double[] min=General.fromPropertyString(props.getProperty(minArrayName));
 			double[] max=General.fromPropertyString(props.getProperty(maxArrayName));
-			return new BackPropNeuralNetwork(nn, min, max);
 			
+            oistream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(properties)));
+			ArrayList<AbstractProperty> propertyList=(ArrayList<AbstractProperty>)oistream.readObject();
+			return new BackPropNeuralNetwork(nn, min, max, propertyList);
+
+		} catch (ClassNotFoundException cnfe) {
+			Logger.writeError("ClassNotFoundException reading Neural Network properties file.");
+			Logger.writeError(cnfe);
+			return null;
 		} catch (FileNotFoundException fnfe) {
-			System.err.println("FileNotFoundException writing properties file. Cannot continue!");
-			fnfe.printStackTrace();
+			Logger.writeError("FileNotFoundException reading Neural Network metadata file.");
+			Logger.writeError(fnfe);
 			return null;
 		} catch (IOException ioe) {
-			System.err.println("IOException writing properties file. Cannot continue!");
-			ioe.printStackTrace();
+			Logger.writeError("IOException reading Neural Network properties file.");
+			Logger.writeError(ioe);
 			return null;
+		} finally {
+			try {
+			if (in!=null) in.close();
+			if (oistream!=null) oistream.close();
+			} catch (IOException ioe) {
+				Logger.writeError("IOException closing read Neural Network properties file.");
+				Logger.writeError(ioe);
+			}
 		}
 	}
 }

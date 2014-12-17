@@ -1,8 +1,12 @@
 package edu.washington.maccoss.intensity_predictor.properties;
 
+import java.io.Serializable;
+
 import gnu.trove.map.hash.TIntDoubleHashMap;
 
-public abstract class AbstractProperty implements PropertyInterface {
+public abstract class AbstractProperty implements PropertyInterface, Serializable {
+	private static final long serialVersionUID=1L;
+	
 	TIntDoubleHashMap aaMap=new TIntDoubleHashMap();
 	private double base=0.0;
 	private final boolean isAverage;
