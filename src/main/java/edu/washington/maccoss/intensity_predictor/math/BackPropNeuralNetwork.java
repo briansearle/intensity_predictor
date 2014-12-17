@@ -1,14 +1,12 @@
 package edu.washington.maccoss.intensity_predictor.math;
 
+import java.util.Arrays;
+
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.data.DataSetRow;
-import org.neuroph.core.input.WeightedSum;
 import org.neuroph.nnet.MultiLayerPerceptron;
-import org.neuroph.nnet.NeuroFuzzyPerceptron;
 import org.neuroph.nnet.learning.BackPropagation;
-import org.neuroph.util.NeuronProperties;
-import org.neuroph.util.TransferFunctionType;
 
 public class BackPropNeuralNetwork {
 	NeuralNetwork<BackPropagation> neuralNetwork;
@@ -25,6 +23,15 @@ public class BackPropNeuralNetwork {
 		neuralNetwork.calculate();
 		double[] networkOutput=neuralNetwork.getOutput();
 		return networkOutput[0];
+	}
+	public double[] getMax() {
+		return max;
+	}
+	public double[] getMin() {
+		return min;
+	}
+	public NeuralNetwork<BackPropagation> getNeuralNetwork() {
+		return neuralNetwork;
 	}
 
 	public static BackPropNeuralNetwork buildModel(double[][] positiveData, double[][] negativeData) {
@@ -66,6 +73,10 @@ public class BackPropNeuralNetwork {
 		return r;
 	}
 
+	public double[] normalize(double[] x) {
+		return normalize(x, min, max);
+	}
+	
 	static double[] normalize(double[] x, double[] min, double[] max) {
 		double[] y=new double[x.length];
 		for (int i=0; i<y.length; i++) {
@@ -81,6 +92,8 @@ public class BackPropNeuralNetwork {
 	static double[][] getMinMax(double[][]... dataset) {
 		double[] max=new double[dataset[0][0].length];
 		double[] min=new double[dataset[0][0].length];
+		Arrays.fill(max, -Double.MAX_VALUE);
+		Arrays.fill(min, Double.MAX_VALUE);
 
 		for (int i=0; i<dataset.length; i++) {
 			for (int j=0; j<dataset[i].length; j++) {
