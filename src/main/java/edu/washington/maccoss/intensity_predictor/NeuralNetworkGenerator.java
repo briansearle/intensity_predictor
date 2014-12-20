@@ -35,10 +35,9 @@ public class NeuralNetworkGenerator {
 		for (int i=0; i<values.length; i++) {
 			normalized[i]=normalize(values[i]);
 		}
-		values=normalized;
 
 		ArrayList<ScoredArray> features=new ArrayList<ScoredArray>();
-		for (int i=0; i<values.length; i++) {
+		for (int i=0; i<normalized.length; i++) {
 			features.add(new ScoredArray(0.0, normalized[i], i, scoreNames[i]));
 		}
 		

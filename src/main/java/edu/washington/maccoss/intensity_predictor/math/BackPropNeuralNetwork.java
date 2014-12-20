@@ -110,7 +110,10 @@ public class BackPropNeuralNetwork {
 	}
 
 	static double normalize(double x, double min, double max) {
-		return (x-min)/(max-min);
+		double n=(x-min)/(max-min);
+		if (n>1) n=1;
+		if (n<0) n=0;
+		return n;
 	}
 
 	static double[][] getMinMax(double[][]... dataset) {

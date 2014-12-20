@@ -19,7 +19,9 @@ public class Protein {
 	public ArrayList<AbstractPeptide> getPeptides() {
 		return new ArrayList<AbstractPeptide>(peptides.values());
 	}
-
+	public void addPeptide(AbstractPeptide peptide) {
+		peptides.put(peptide.getSequence(), peptide);
+	}
 	public AbstractPeptide addPeptide(String sequence, float intensity, byte charge) {
 		return addPeptide(sequence, intensity, charge, null);
 	}

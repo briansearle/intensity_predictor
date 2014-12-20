@@ -27,6 +27,11 @@ import gnu.trove.list.array.TIntArrayList;
 
 public class Main {
 	public static void main(String[] args) {
+		args=new String[] {
+				"/Users/searleb/Documents/school/maccoss rotation/transitions/jarrett_intensities.txt", 
+				"/Users/searleb/Documents/school/maccoss rotation/transitions/jarrett.nn"
+		};
+		
 		File peptidesWithIntensityFile=new File(args[0]);
 		File neuralNetworkFile=new File(args[1]);
 		
@@ -35,7 +40,6 @@ public class Main {
 		BackPropNeuralNetwork readbp=NeuralNetworkData.readNetwork(neuralNetworkFile);
 		System.out.println("read out: "+readbp.getPropertyList().size());
 
-		//FIXME normalization!
 		readbp.getScore("PEPTIDEK");
 	}
 
