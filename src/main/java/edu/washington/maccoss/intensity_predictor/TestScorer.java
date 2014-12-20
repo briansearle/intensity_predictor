@@ -60,6 +60,7 @@ public class TestScorer {
 			}
 		}
 		
+		double[] medians=new double[scoresByRank.size()];
 		int rank=0;
 		System.out.println("Rank\tQ1\tM\tQ3");
 		for (TDoubleArrayList list : scoresByRank) {
@@ -68,7 +69,18 @@ public class TestScorer {
 			double[] values=list.toArray();
 			Arrays.sort(values);
 			double[] quartiles=Median.quartiles(values);
+			medians[rank-1]=quartiles[1];
 			System.out.println(rank+"\t"+quartiles[0]+"\t"+quartiles[1]+"\t"+quartiles[2]);
+		}
+		double[] movingAverage=new double[medians.length];
+		movingAverage[0]=medians[0];
+		movingAverage[movingAverage.length-1]=medians[medians.length-1];
+		for (int i=1; i<movingAverage.length-1; i++) {
+			movingAverage[i]=(medians[i]+medians[i-1]+medians[i+1])/3;
+		}
+		System.out.println("\nRank\tMoving Average");
+		for (int i=0; i<movingAverage.length; i++) {
+			System.out.println((i+1)+"\t"+movingAverage[i]);
 		}
 	}
 
