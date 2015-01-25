@@ -13,15 +13,7 @@ public class PeptideWithScores extends AbstractPeptide {
 	public PeptideWithScores(String sequence, float intensity, Protein protein, double[] properties) {
 		super(sequence, intensity, protein);
 		
-		if (true) {
-			this.scores=properties;
-		} else {
-			double[] aaComposition=getAAComposition(getSequence(), aas);
-			double[] scores=new double[properties.length+aaComposition.length];
-			System.arraycopy(properties, 0, scores, 0, properties.length);
-			System.arraycopy(aaComposition, 0, scores, properties.length, aaComposition.length);
-			this.scores=scores;
-		}
+		this.scores=properties;
 	}
 
 	@Override
