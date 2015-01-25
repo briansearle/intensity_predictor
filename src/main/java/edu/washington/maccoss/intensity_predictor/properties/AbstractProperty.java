@@ -1,8 +1,8 @@
 package edu.washington.maccoss.intensity_predictor.properties;
 
-import java.io.Serializable;
-
 import gnu.trove.map.hash.TIntDoubleHashMap;
+
+import java.io.Serializable;
 
 public abstract class AbstractProperty implements PropertyInterface, Serializable {
 	private static final long serialVersionUID=1L;
