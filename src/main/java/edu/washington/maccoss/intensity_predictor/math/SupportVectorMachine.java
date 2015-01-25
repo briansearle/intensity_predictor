@@ -2,7 +2,6 @@ package edu.washington.maccoss.intensity_predictor.math;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import edu.berkeley.compbio.jlibsvm.ImmutableSvmParameter;
@@ -37,7 +36,6 @@ import edu.berkeley.compbio.jlibsvm.scaler.NoopScalingModelLearner;
 import edu.berkeley.compbio.jlibsvm.scaler.ScalingModelLearner;
 import edu.berkeley.compbio.jlibsvm.scaler.ZscoreScalingModelLearner;
 import edu.berkeley.compbio.jlibsvm.util.SparseVector;
-import edu.berkeley.compbio.ml.CrossValidationResults;
 
 public class SupportVectorMachine {
 	private SVM svm;

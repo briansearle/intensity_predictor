@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.StringTokenizer;
 
-import junit.framework.Assert;
 import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
 import edu.washington.maccoss.intensity_predictor.math.Correlation;
 import edu.washington.maccoss.intensity_predictor.math.General;
@@ -30,47 +29,41 @@ import edu.washington.maccoss.intensity_predictor.structures.Protein;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
-public class Main {
+public class BuildClassifier {
 	public static final int TOTAL_FEATURES_CONSIDERED=10;
 	public static void main(String[] args) {
-		args=new String[] {
+		/*args=new String[] {
 				"/Users/searleb/Documents/school/maccoss rotation/transitions/jarrett_intensities.txt", 
 				"/Users/searleb/Documents/school/maccoss rotation/transitions/jarrett.nn"
-		};
+		};*/
+		
+		if (args.length!=2) {
+			Logger.writeError("Incorrect number of arguments! BuildClassifier takes two arguments, the intensity file and the location of the new neural network.");
+			if (args.length>0) Logger.writeError("The arguments you specified were:");
+			for (int i=0; i<args.length; i++) {
+				Logger.writeError("\t("+(i+1)+") ["+args[i]+"]");	
+			}
+			System.exit(1);
+		}
+		
+		if (!args[1].endsWith(".nn")) {
+			Logger.writeError("Adding '.nn' extension to the neural network file.");
+			args[1]=args[1]+".nn";
+		}
 		
 		File peptidesWithIntensityFile=new File(args[0]);
 		File neuralNetworkFile=new File(args[1]);
 		
-		if (true) {
-			BackPropNeuralNetwork backprop=buildNN(peptidesWithIntensityFile, 100, false, 0.3, true);
-			double testTotal=testTotal(backprop, true);
-			//NeuralNetworkData.saveNetwork(backprop, neuralNetworkFile);
-			System.exit(0);
+		if (!peptidesWithIntensityFile.exists()||!peptidesWithIntensityFile.canRead()) {
+			Logger.writeError("Can't read the intensity file! Please make sure it available and readable. The file you specified was:");
+			Logger.writeError("\t["+peptidesWithIntensityFile.getAbsolutePath()+"]");
+			System.exit(1);
 		}
 		
-		double[] minCorrelationForGrouping=new double[] {0.0, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7};
-		
-		double previousTestScore=0.0;
-		for (int i=10; i<=15; i++) { // number of features
-			for (int j=0; j<5; j++) { // iteration
-					for (int l=0; l<minCorrelationForGrouping.length; l++) {
-						BackPropNeuralNetwork backprop=buildNN(peptidesWithIntensityFile, i, false, minCorrelationForGrouping[l], minCorrelationForGrouping[l]!=0.0);
-
-						double testTotal=testTotal(backprop, false);
-						
-						//double testAPOB=testAPOB(backprop, false);
-						System.out.println("Test:\t"+i+"\t"+j+"\t"+minCorrelationForGrouping[l]+"\t"+testTotal);
-
-						if (testTotal>previousTestScore) {
-							previousTestScore=testTotal;
-						
-							//NeuralNetworkData.saveNetwork(backprop, neuralNetworkFile);
-							//BackPropNeuralNetwork readbp=NeuralNetworkData.readNetwork(neuralNetworkFile);
-							Assert.assertEquals(i, backprop.getPropertyList().size());
-						}
-				}
-			}
-		}
+		BackPropNeuralNetwork backprop=buildNN(peptidesWithIntensityFile, 100, false, 0.3, true);
+		Logger.writeLog("Saving network to "+neuralNetworkFile.getName()+"...");
+		NeuralNetworkData.saveNetwork(backprop, neuralNetworkFile);
+		Logger.writeLog("Finished!");
 	}
 	
 	private static double testTotal(BackPropNeuralNetwork network, boolean print) {
@@ -163,6 +156,8 @@ public class Main {
 	}
 
 	private static BackPropNeuralNetwork buildNN(File peptidesWithIntensityFile, int numFeatures, boolean useSpearmans, double minCorrelationForGrouping, boolean useMRMR) {
+
+		Logger.writeLog("Extracting properties from "+peptidesWithIntensityFile.getName()+"...");
 		ArrayList<PropertyInterface> properties=getProperties();
 		String[] propertyNames=new String[properties.size()];
 		for (int i=0; i<propertyNames.length; i++) {
@@ -190,6 +185,7 @@ public class Main {
 			usedProperties.add((AbstractProperty)properties.get(index));
 		}
 
+		Logger.writeLog("Building network...");
 		BackPropNeuralNetwork backprop=NeuralNetworkGenerator.getNeuralNetwork(trainingIntensities, trainingValues, bestFeatureIndicies, usedProperties);
 		
 		return backprop;

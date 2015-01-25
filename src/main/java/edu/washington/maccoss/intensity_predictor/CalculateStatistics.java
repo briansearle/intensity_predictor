@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
-import edu.washington.maccoss.intensity_predictor.math.Correlation;
-import edu.washington.maccoss.intensity_predictor.math.General;
 import edu.washington.maccoss.intensity_predictor.math.Median;
 import edu.washington.maccoss.intensity_predictor.math.NeuralNetworkData;
 import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;

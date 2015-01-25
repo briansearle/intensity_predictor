@@ -5,7 +5,6 @@ import edu.washington.maccoss.intensity_predictor.math.Correlation;
 import edu.washington.maccoss.intensity_predictor.math.General;
 import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
 import edu.washington.maccoss.intensity_predictor.structures.AbstractPeptide;
-import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
@@ -96,7 +95,7 @@ public class NeuralNetworkGenerator {
 			}
 			
 			bestFeatureIndicies.add(best.index);
-			System.out.println(bestFeatureIndicies.size()+"\t"+best.index+"\t"+best.score+"\t"+best.toString());
+			Logger.writeLog("mRMR Feature: ("+bestFeatureIndicies.size()+") Correlation: "+best.toString());
 		}
 		return bestFeatureIndicies;
 	}
@@ -215,7 +214,7 @@ public class NeuralNetworkGenerator {
 		private final String scoreName;
 		@Override
 		public String toString() {
-			return correlation+" --> "+getName();
+			return correlation+" ("+getName()+")";
 		}
 
 		public ScoredArray(double correlation, double[] normalizedArray, int index, String scoreName) {
