@@ -58,6 +58,30 @@ public class BackPropNeuralNetwork {
 		return neuralNetwork;
 	}
 
+	public static BackPropNeuralNetwork buildModel(double[][] data, double[] intensities, ArrayList<AbstractProperty> finalPropertyList) {
+		double[][] bounds=getMinMax(data);
+		double[] min=bounds[0];
+		double[] max=bounds[1];
+		double[][][] normMF=normalizeMinMax(min, max, data);
+		data=normMF[0];
+
+		int numHiddenNodes=Math.round((min.length+1.0f)*2.0f/3.0f);
+		numHiddenNodes=min.length;
+		NeuralNetwork<BackPropagation> neuralNetwork=new MultiLayerPerceptron(min.length, numHiddenNodes, 1);
+
+		BackPropagation learningRule=new BackPropagation();
+		learningRule.setMaxIterations(20000);
+		neuralNetwork.setLearningRule(learningRule);
+		
+		DataSet trainingSet=new DataSet(min.length, 1);
+		for (int i=0; i<data.length; i++) {
+			trainingSet.addRow(new DataSetRow(data[i], new double[] {intensities[i]}));
+		}
+
+		neuralNetwork.learn(trainingSet);
+		return new BackPropNeuralNetwork(neuralNetwork, min, max, finalPropertyList);
+	}
+
 	public static BackPropNeuralNetwork buildModel(double[][] positiveData, double[][] negativeData, ArrayList<AbstractProperty> finalPropertyList) {
 		double[][] bounds=getMinMax(positiveData, negativeData);
 		double[] min=bounds[0];

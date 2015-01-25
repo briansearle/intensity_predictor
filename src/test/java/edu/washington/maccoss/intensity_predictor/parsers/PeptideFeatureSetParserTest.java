@@ -16,6 +16,7 @@ import edu.washington.maccoss.intensity_predictor.structures.Protein;
 import gnu.trove.list.array.TIntArrayList;
 
 public class PeptideFeatureSetParserTest extends TestCase {
+	public static final int TOTAL_FEATURES_CONSIDERED=10;
 
 	public void testParsing() throws Exception {
 		ArrayList<AbstractPeptide> sprgPeptides=getSPRGPeptides();
@@ -68,7 +69,7 @@ public class PeptideFeatureSetParserTest extends TestCase {
 		}
 		
 		double[][] trainingValues=new double[PeptideFeatureSetParser.scoreNames.length][];
-		TIntArrayList bestFeatureIndicies=NeuralNetworkGenerator.getBestFeatureIndicies(trainingPeptides, trainingIntensities, trainingValues, PeptideFeatureSetParser.scoreNames);
+		TIntArrayList bestFeatureIndicies=NeuralNetworkGenerator.getBestFeatureIndicies(trainingPeptides, trainingIntensities, trainingValues, PeptideFeatureSetParser.scoreNames, TOTAL_FEATURES_CONSIDERED, false, false);
 		BackPropNeuralNetwork backprop=NeuralNetworkGenerator.getNeuralNetwork(trainingIntensities, trainingValues, bestFeatureIndicies, new ArrayList<AbstractProperty>());
 		//NeuralNetworkData.saveNetwork(backprop, new File("/Users/searleb/tmp/nn"));
 		
@@ -78,7 +79,7 @@ public class PeptideFeatureSetParserTest extends TestCase {
 		}
 		
 		for (int i=0; i<trainingIntensities.length; i++) {
-			double[] featureArray=new double[NeuralNetworkGenerator.TOTAL_FEATURES_CONSIDERED];
+			double[] featureArray=new double[TOTAL_FEATURES_CONSIDERED];
 			for (int j=0; j<trainingFeatures.size(); j++) {
 				featureArray[j]=trainingFeatures.get(j)[i];
 			}
@@ -99,7 +100,7 @@ public class PeptideFeatureSetParserTest extends TestCase {
 		}
 		
 		for (int i=0; i<testingIntensities.length; i++) {
-			double[] featureArray=new double[NeuralNetworkGenerator.TOTAL_FEATURES_CONSIDERED];
+			double[] featureArray=new double[TOTAL_FEATURES_CONSIDERED];
 			for (int j=0; j<testingFeatures.size(); j++) {
 				featureArray[j]=testingFeatures.get(j)[i];
 			}

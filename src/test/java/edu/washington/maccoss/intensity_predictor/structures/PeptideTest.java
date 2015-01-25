@@ -21,14 +21,10 @@ public class PeptideTest extends TestCase {
 		String sequence="ELVISLIVESK";
 		Peptide peptide=new Peptide(sequence, 0.0f, null);
 		double[] scores=peptide.getScoreArray();
-		assertEquals(8+20, scores.length);
-		assertEquals(0.0, scores[0]);
-		assertEquals(194.54545454545453, scores[1]);
-		assertEquals(1.1363636363636362, scores[2]);
-		assertEquals(0.0, scores[3]);
-		assertEquals(18.881818181818186, scores[4]);
-		assertEquals(4.531639099121094, scores[5]);
-		assertEquals(1229.4795000000001, scores[6]);
-		assertEquals(-1.1613609203277973, scores[7]);
+		assertEquals(4, scores.length);
+		assertEquals(1228.7279700000001, scores[0], 0.000001);
+		assertEquals(1.0, scores[1]);
+		assertEquals(2.0, scores[2]);
+		assertEquals(11.0, scores[3]);
 	}
 }
