@@ -21,31 +21,40 @@ import edu.washington.maccoss.intensity_predictor.structures.Protein;
 import gnu.trove.list.array.TDoubleArrayList;
 
 public class CalculateStatistics {
+	private static final int topXofN=1;
+	private static final float percentBetterThan=0.80f;
 	private static final int topN=25;
 	private static final int minimumNumPeptides=4;
 
 	public static void main(String[] args) {
+		String base="/Users/searleb/Documents/school/maccoss rotation/transitions/";
 		boolean random=false;
-		boolean andrew=false;
+		boolean andrew=true;
+		boolean jim44=false;
+		// default is jim18
 		if (true) {
-			if (andrew) args=new String[] {"/Users/searleb/Documents/school/maccoss rotation/transitions/ppa_andrew_scores.txt"};
-			else args=new String[] {"/Users/searleb/Documents/school/maccoss rotation/transitions/ppa_scores.txt"};
+			if (andrew) args=new String[] {base+"ppa_andrew_scores.txt"};
+			else if (jim44) args=new String[] {base+"ppa_newjim_scores.txt"};
+			else args=new String[] {base+"ppa_jim18_scores.txt"};
 		}
 		if (true) {
-			if (andrew) args=new String[] {"/Users/searleb/Documents/school/maccoss rotation/transitions/esp_andrew_scores.txt"};
-			else args=new String[] {"/Users/searleb/Documents/school/maccoss rotation/transitions/esp_scores.txt"};
-		}
-		if (true) {
-			if (andrew) args=new String[] {"/Users/searleb/Documents/school/maccoss rotation/transitions/consequence_ann_andrew_scores.txt"};
-			else args=new String[] {"/Users/searleb/Documents/school/maccoss rotation/transitions/consequence_ann_scores.txt"};
-		}
-		if (true) {
-			if (andrew) args=new String[] {"/Users/searleb/Documents/school/maccoss rotation/transitions/consequence_svm_andrew_scores.txt"};
-			else args=new String[] {"/Users/searleb/Documents/school/maccoss rotation/transitions/consequence_svm_scores.txt"};
+			if (andrew) args=new String[] {base+"esp_andrew_scores.txt"};
+			else if (jim44) args=new String[] {base+"esp_newjim_scores.txt"};
+			else args=new String[] {base+"esp_jim18_scores.txt"};
 		}
 		if (false) {
-			if (andrew) args=new String[] {"/Users/searleb/Documents/school/maccoss rotation/transitions/esp_andrew_scores.txt", "/Users/searleb/Documents/school/maccoss rotation/transitions/jarrett.nn"};
-			else args=new String[] {"/Users/searleb/Documents/school/maccoss rotation/transitions/esp_scores.txt", "/Users/searleb/Documents/school/maccoss rotation/transitions/jarrett.nn"};
+			if (andrew) args=new String[] {base+"consequence_ann_andrew_scores.txt"};
+			else args=new String[] {base+"consequence_ann_jim18_scores.txt"};
+		}
+		if (false) {
+			if (andrew) args=new String[] {base+"consequence_svm_andrew_scores.txt"};
+			else args=new String[] {base+"consequence_svm_scores.txt"};
+		}
+		if (true) {
+			String nnLocation=base+"new_jarrett_intensities.nn"; // using intensities
+			if (andrew) args=new String[] {base+"esp_andrew_scores.txt", nnLocation};
+			else if (jim44) args=new String[] {base+"esp_newjim_scores.txt", nnLocation};
+			else args=new String[] {base+"esp_jim18_scores.txt", nnLocation};
 		}
 		System.out.println("Processing: "+args[0]);
 		File peptidesWithIntensityFile=new File(args[0]);
@@ -88,7 +97,7 @@ public class CalculateStatistics {
 				localScores.add(peptide.getScoreArray()[0]);
 				//System.out.println(protein.getAccessionNumber()+"\t"+peptide.getSequence()+"\t"+rank+"\t"+peptide.getScoreArray()[0]);
 			}
-			//System.out.println(protein.getAccessionNumber()+"\t"+protein.getPeptides().size()+"\t"+Correlation.getPearsons(localRanks.toArray(), localScores.toArray()));
+			//System.out.println(protein.getAccessionNumber()+"\t"+protein.getPeptides().size()+"\t"+(-Correlation.getPearsons(localRanks.toArray(), localScores.toArray())));
 			//System.out.println(General.toPropertyString(localRanks.toArray()));
 			//System.out.println(General.toPropertyString(localScores.toArray()));
 		}
@@ -119,8 +128,7 @@ public class CalculateStatistics {
 			System.out.println((i+1)+"\t"+movingAverage[i]);
 		}
 
-		float targetPercent=0.75f;
-		int[] chooseNTop25=new int[5];
+		int[] chooseNTopPercent=new int[5+topXofN-1];
 		//System.out.println("\nAccession\t#Peptides\tChoicesBeforeTarget");
 		for (Protein protein : proteins) {
 			ArrayList<AbstractPeptide> peptides=protein.getPeptides();
@@ -131,40 +139,42 @@ public class CalculateStatistics {
 			Arrays.sort(intensities);
 			//double[] quartiles=Median.quartiles(intensities);
 			//double target=quartiles[2];
-			double target=intensities[(int)Math.floor(intensities.length*targetPercent)];
+			double target=intensities[(int)Math.floor(intensities.length*percentBetterThan)];
 			
 			Collections.sort(peptides, new PeptideScoreComparator());
 			Collections.reverse(peptides);
 			
+			int count=0;
 			for (int i=0; i<peptides.size(); i++) {
 				if (peptides.get(i).getIntensity()>=target) {
+					count++;
+				}
+				if (count>=topXofN) {
 					//System.out.println(protein.getAccessionNumber()+"\t"+peptides.size()+"\t"+(i+1));
-					for (int j=i; j<chooseNTop25.length; j++) {
-						chooseNTop25[j]++;
+					for (int j=i; j<chooseNTopPercent.length; j++) {
+						chooseNTopPercent[j]++;
 					}
 					break;
 				}
 			}
 		}
 		
-		System.out.println("\nChoose N\tTop "+Math.round((1.0f-targetPercent)*100f)+"%");
-		for (int i=0; i<chooseNTop25.length; i++) {
-			System.out.println((i+1)+"\t"+chooseNTop25[i]/(float)proteins.size());
+		System.out.println("\nChoose N\tTop "+Math.round((1.0f-percentBetterThan)*100f)+"%");
+		for (int i=topXofN-1; i<chooseNTopPercent.length; i++) {
+			System.out.println((i+1)+"\t"+chooseNTopPercent[i]/(float)proteins.size());
 		}
 		
-
-		System.out.println("\nSTAT5A rank\tscore");
+		String accession="FLJ20321";
+		System.out.println("\n"+accession+" rank\tscore");
 		for (Protein protein : proteins) {
-			if (protein.getAccessionNumber().endsWith("STAT5A")) {
+			if (protein.getAccessionNumber().endsWith(accession)) {
 				ArrayList<AbstractPeptide> peptides=protein.getPeptides();	
 				Collections.sort(peptides);
 				Collections.reverse(peptides);
 				
 				for (int i=0; i<peptides.size(); i++) {
 
-					//System.out.print(protein.getAccessionNumber()+"\t");
-					System.out.println((i+1)+"\t"+peptides.get(i).getScoreArray()[0]);
-					//System.out.println(peptides.get(i).getIntensity());
+					System.out.println((i+1)+"\t"+peptides.get(i).getScoreArray()[0]);//+"\t"+peptides.get(i).getIntensity());//);
 				}
 			}
 		}
@@ -198,7 +208,7 @@ public class CalculateStatistics {
 					intensity=Float.parseFloat(st.nextToken());
 				}
 				
-				final double score;
+				double score;
 				if (random) {
 					int ragu=0;
 					if (sequence.length()>25||sequence.length()<8) {
@@ -222,7 +232,13 @@ public class CalculateStatistics {
 				} else if (network!=null) {
 					score=network.getScore(sequence);
 				} else if (st.hasMoreTokens()) {
-					score=Double.parseDouble(st.nextToken());
+					String scoreToken=st.nextToken();
+					try {
+						score=Double.parseDouble(scoreToken);
+					} catch (NumberFormatException nfe) {
+						System.err.println("Found "+scoreToken+" instead of a score! Assuming score of 0.");
+						score=0.0;
+					}
 				} else {
 					score=0.0;
 				}

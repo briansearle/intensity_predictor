@@ -82,7 +82,7 @@ public class BackPropNeuralNetwork {
 		return new BackPropNeuralNetwork(neuralNetwork, min, max, finalPropertyList);
 	}
 
-	public static BackPropNeuralNetwork buildModel(double[][] positiveData, double[][] negativeData, ArrayList<AbstractProperty> finalPropertyList) {
+	public static BackPropNeuralNetwork buildModel(double[][] positiveData, double[] positiveIntensities, double[][] negativeData, double[] negativeIntensities, ArrayList<AbstractProperty> finalPropertyList) {
 		double[][] bounds=getMinMax(positiveData, negativeData);
 		double[] min=bounds[0];
 		double[] max=bounds[1];
@@ -99,11 +99,13 @@ public class BackPropNeuralNetwork {
 		neuralNetwork.setLearningRule(learningRule);
 		
 		DataSet trainingSet=new DataSet(min.length, 1);
-		for (double[] ds : positiveData) {
-			trainingSet.addRow(new DataSetRow(ds, new double[] {1}));
+		for (int i=0; i<positiveData.length; i++) {
+			double[] ds=positiveData[i];
+			trainingSet.addRow(new DataSetRow(ds, new double[] {positiveIntensities[i]}));
 		}
-		for (double[] ds : negativeData) {
-			trainingSet.addRow(new DataSetRow(ds, new double[] {0}));
+		for (int i=0; i<negativeData.length; i++) {
+			double[] ds=negativeData[i];
+			trainingSet.addRow(new DataSetRow(ds, new double[] {negativeIntensities[i]}));
 		}
 
 		neuralNetwork.learn(trainingSet);
