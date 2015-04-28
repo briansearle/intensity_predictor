@@ -5,9 +5,11 @@ import edu.washington.maccoss.intensity_predictor.math.Correlation;
 import edu.washington.maccoss.intensity_predictor.math.General;
 import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
 import edu.washington.maccoss.intensity_predictor.structures.AbstractPeptide;
+import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.commons.math.stat.descriptive.rank.Max;
@@ -83,6 +85,7 @@ public class NeuralNetworkGenerator {
 			}
 			Collections.sort(arrays);
 			ScoredArray best=arrays.get(arrays.size()-1);
+			
 			if (best.correlation==0) break;
 			
 			featureAvailable[best.index]=false;
@@ -166,8 +169,14 @@ public class NeuralNetworkGenerator {
 		}
 
 		double[] intensityArray=originalIntensities.clone();
+		Arrays.sort(intensityArray);
+		double minIntensity=intensityArray[0];
+		double maxIntensity=intensityArray[intensityArray.length-1]-minIntensity;
+		
 		ArrayList<double[]> goodFeatures=new ArrayList<double[]>();
 		ArrayList<double[]> badFeatures=new ArrayList<double[]>();
+		TDoubleArrayList goodIntensities=new TDoubleArrayList();
+		TDoubleArrayList badIntensities=new TDoubleArrayList();
 		double q1=General.getPercentile(intensityArray, 0.25);
 		double q3=General.getPercentile(intensityArray, 0.75);
 		for (int i=0; i<originalIntensities.length; i++) {
@@ -177,12 +186,14 @@ public class NeuralNetworkGenerator {
 			}
 			if (q1>originalIntensities[i]) {
 				badFeatures.add(featureArray);
+				badIntensities.add((originalIntensities[i]-minIntensity)/maxIntensity);
 			} else if (q3<originalIntensities[i]) {
 				goodFeatures.add(featureArray);
+				goodIntensities.add((originalIntensities[i]-minIntensity)/maxIntensity);
 			}
 		}
 		
-		BackPropNeuralNetwork backprop=BackPropNeuralNetwork.buildModel(goodFeatures.toArray(new double[goodFeatures.size()][]), badFeatures.toArray(new double[badFeatures.size()][]), finalPropertyList);
+		BackPropNeuralNetwork backprop=BackPropNeuralNetwork.buildModel(goodFeatures.toArray(new double[goodFeatures.size()][]), goodIntensities.toArray(), badFeatures.toArray(new double[badFeatures.size()][]), badIntensities.toArray(), finalPropertyList);
 		return backprop;
 	}
 	

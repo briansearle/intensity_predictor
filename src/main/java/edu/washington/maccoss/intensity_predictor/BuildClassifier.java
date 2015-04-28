@@ -21,6 +21,7 @@ import edu.washington.maccoss.intensity_predictor.properties.LengthProperty;
 import edu.washington.maccoss.intensity_predictor.properties.MassProperty;
 import edu.washington.maccoss.intensity_predictor.properties.NumberAcidicProperty;
 import edu.washington.maccoss.intensity_predictor.properties.NumberBasicProperty;
+import edu.washington.maccoss.intensity_predictor.properties.HasProlineProperty;
 import edu.washington.maccoss.intensity_predictor.properties.PropertyInterface;
 import edu.washington.maccoss.intensity_predictor.structures.AbstractPeptide;
 import edu.washington.maccoss.intensity_predictor.structures.PeptideScoreComparator;
@@ -32,11 +33,6 @@ import gnu.trove.list.array.TIntArrayList;
 public class BuildClassifier {
 	public static final int TOTAL_FEATURES_CONSIDERED=10;
 	public static void main(String[] args) {
-		/*args=new String[] {
-				"/Users/searleb/Documents/school/maccoss rotation/transitions/jarrett_intensities.txt", 
-				"/Users/searleb/Documents/school/maccoss rotation/transitions/jarrett.nn"
-		};*/
-		
 		if (args.length!=2) {
 			Logger.writeError("Incorrect number of arguments! BuildClassifier takes two arguments, the intensity file and the location of the new neural network.");
 			if (args.length>0) Logger.writeError("The arguments you specified were:");
