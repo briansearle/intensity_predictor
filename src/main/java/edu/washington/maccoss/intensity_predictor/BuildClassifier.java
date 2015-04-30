@@ -22,12 +22,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.StringTokenizer;
 
 import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
-import edu.washington.maccoss.intensity_predictor.math.Correlation;
 import edu.washington.maccoss.intensity_predictor.math.General;
 import edu.washington.maccoss.intensity_predictor.math.NeuralNetworkData;
 import edu.washington.maccoss.intensity_predictor.parsers.AAIndex1Parser;
@@ -38,7 +35,6 @@ import edu.washington.maccoss.intensity_predictor.properties.NumberAcidicPropert
 import edu.washington.maccoss.intensity_predictor.properties.NumberBasicProperty;
 import edu.washington.maccoss.intensity_predictor.properties.PropertyInterface;
 import edu.washington.maccoss.intensity_predictor.structures.AbstractPeptide;
-import edu.washington.maccoss.intensity_predictor.structures.PeptideScoreComparator;
 import edu.washington.maccoss.intensity_predictor.structures.PeptideWithScores;
 import edu.washington.maccoss.intensity_predictor.structures.Protein;
 import gnu.trove.list.array.TDoubleArrayList;
@@ -74,95 +70,6 @@ public class BuildClassifier {
 		Logger.writeLog("Saving network to "+neuralNetworkFile.getName()+"...");
 		NeuralNetworkData.saveNetwork(backprop, neuralNetworkFile);
 		Logger.writeLog("Finished!");
-	}
-	
-	private static double testTotal(BackPropNeuralNetwork network, boolean print) {
-		ArrayList<Protein> proteins=CalculateStatistics.getProteins(new File("/Users/searleb/Documents/school/maccoss rotation/transitions/esp_scores.txt"), network, false);
-		float targetPercent=0.75f;
-		int[] chooseNTop25=new int[5];
-		for (Protein protein : proteins) {
-			ArrayList<AbstractPeptide> peptides=protein.getPeptides();
-			double[] intensities=new double[peptides.size()];
-			for (int i=0; i<intensities.length; i++) {
-				intensities[i]=peptides.get(i).getIntensity();
-			}
-			Arrays.sort(intensities);
-			double target=intensities[(int)Math.floor(intensities.length*targetPercent)];
-			
-			Collections.sort(peptides, new PeptideScoreComparator());
-			Collections.reverse(peptides);
-			
-			for (int i=0; i<peptides.size(); i++) {
-				if (peptides.get(i).getIntensity()>=target) {
-					for (int j=i; j<chooseNTop25.length; j++) {
-						chooseNTop25[j]++;
-					}
-					break;
-				}
-			}
-		}
-		
-		double total=0.0;
-		for (int i=0; i<chooseNTop25.length; i++) {
-			float percent=chooseNTop25[i]/(float)proteins.size();
-			total+=(5.0f-i)*percent;
-		}
-		if (print) {
-			System.out.println("\nChoose N\tTop "+Math.round((1.0f-targetPercent)*100f)+"%");
-			for (int i=0; i<chooseNTop25.length; i++) {
-				float percent=chooseNTop25[i]/(float)proteins.size();
-				System.out.println((i+1)+"\t"+percent);
-			}
-		}
-		return total;
-	}
-	
-	private static double testAPOB(BackPropNeuralNetwork network, boolean usePrecursor) {
-		BufferedReader reader=null;
-		try {
-			File apobFile=new File(ClassLoader.getSystemResource("apob_human.txt").toURI());
-
-			reader=new BufferedReader(new FileReader(apobFile));
-			String line=null;
-			
-			ArrayList<String> peptides=new ArrayList<String>();
-			TDoubleArrayList intensities=new TDoubleArrayList();
-			TDoubleArrayList scores=new TDoubleArrayList();
-			while ((line=reader.readLine())!=null) {
-				if (line.startsWith("#")) continue; // comment
-				StringTokenizer st=new StringTokenizer(line);
-				String sequence=st.nextToken();
-				double preIntensity=Double.parseDouble(st.nextToken());
-				double fragIntensity=Double.parseDouble(st.nextToken());
-				
-				peptides.add(sequence);
-				if (usePrecursor) {
-					intensities.add(preIntensity);
-				} else {
-					intensities.add(fragIntensity);
-				}
-				scores.add(network.getScore(sequence));
-			}
-			return Correlation.getSpearmans(intensities.toArray(), scores.toArray());
-
-		} catch (URISyntaxException urise) {
-			Logger.writeError("Error parsing APOB test");
-			Logger.writeError(urise);
-			return 0.0;
-
-		} catch (IOException ioe) {
-			Logger.writeError("Error parsing APOB test");
-			Logger.writeError(ioe);
-			return 0.0;
-			
-		} finally {
-			try {
-				if (reader!=null) reader.close();
-			} catch (IOException ioe) {
-				Logger.writeError("Error parsing APOB test");
-				Logger.writeError(ioe);
-			}
-		}
 	}
 
 	private static BackPropNeuralNetwork buildNN(File peptidesWithIntensityFile, int numFeatures, boolean useSpearmans, double minCorrelationForGrouping, boolean useMRMR) {

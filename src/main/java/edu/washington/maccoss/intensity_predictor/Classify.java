@@ -153,7 +153,7 @@ public class Classify {
 			
 		} else {
 			try {
-				URI uri=ClassLoader.getSystemResource("jarrett.nn").toURI();
+				URI uri=ClassLoader.getSystemResource("new_jarrett_intensities.nn").toURI();
 				File neuralNetworkFile=new File(uri);
 
 				try {
