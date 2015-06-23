@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.washington.maccoss.intensity_predictor.structures;
+package edu.washington.maccoss.intensity_predictor.properties;
 
+import java.io.Serializable;
 
-
-public class PeptideWithScores extends AbstractPeptide {
-	public static char[] aas="ACDEFGHIKLMNPQRSTVWY".toCharArray();
+public class NumberAAProperty extends AbstractProperty implements Serializable {
+	private static final long serialVersionUID=1L;
+	private final char aa;
 	
-	private final double[] scores;
-	public PeptideWithScores(String sequence, float intensity, Protein protein, double[] properties) {
-		super(sequence, intensity, protein);
-		
-		this.scores=properties;
+	
+	public NumberAAProperty(char aa) {
+		super(false);
+		this.aa=aa;
+		addProperty(aa, 1);
 	}
 
 	@Override
-	public double[] getScoreArray() {
-		return scores;
+	public String toString() {
+		return "Number of "+aa+" Residues";
 	}
 }

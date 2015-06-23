@@ -58,7 +58,7 @@ public class TestClassifiers {
 		}
 
 		ArrayList<Protein> espProteins=CalculateStatistics.getProteins(peptidesWithIntensityFile, null, false);
-		HashMap<String, Protein> espMap=new HashMap<>();
+		HashMap<String, Protein> espMap=new HashMap<String, Protein>();
 		for (Protein protein : espProteins) {
 			espMap.put(protein.getAccessionNumber(), protein);
 		}

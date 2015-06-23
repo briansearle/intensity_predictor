@@ -42,7 +42,7 @@ public class General {
 	public static String toPropertyString(double[] d) {
 		StringBuilder sb=new StringBuilder();
 		for (int i=0; i<d.length; i++) {
-			if (i>0) sb.append(",");
+			if (i>0) sb.append("\t");
 			sb.append(Double.toString(d[i]));
 		}
 		return sb.toString();

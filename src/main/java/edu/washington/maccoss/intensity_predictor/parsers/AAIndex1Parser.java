@@ -28,7 +28,7 @@ public class AAIndex1Parser {
 
 	//see ftp://ftp.genome.jp/pub/db/community/aaindex/aaindex.doc
 	public static ArrayList<PropertyInterface> parseAAIndex1(File f, boolean alsoUseTotalProperties) {
-		ArrayList<PropertyInterface> properties=new ArrayList<>();
+		ArrayList<PropertyInterface> properties=new ArrayList<PropertyInterface>();
 		BufferedReader reader=null;
 		try {
 			reader=new BufferedReader(new FileReader(f));
