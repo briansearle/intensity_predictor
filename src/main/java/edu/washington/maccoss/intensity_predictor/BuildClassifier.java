@@ -16,8 +16,10 @@
 package edu.washington.maccoss.intensity_predictor;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,6 +33,7 @@ import edu.washington.maccoss.intensity_predictor.parsers.AAIndex1Parser;
 import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
 import edu.washington.maccoss.intensity_predictor.properties.LengthProperty;
 import edu.washington.maccoss.intensity_predictor.properties.MassProperty;
+import edu.washington.maccoss.intensity_predictor.properties.NumberAAProperty;
 import edu.washington.maccoss.intensity_predictor.properties.NumberAcidicProperty;
 import edu.washington.maccoss.intensity_predictor.properties.NumberBasicProperty;
 import edu.washington.maccoss.intensity_predictor.properties.PropertyInterface;
@@ -74,12 +77,21 @@ public class BuildClassifier {
 
 	private static BackPropNeuralNetwork buildNN(File peptidesWithIntensityFile, int numFeatures, boolean useSpearmans, double minCorrelationForGrouping, boolean useMRMR) {
 
+		File f=new File("properties.tsv");
+	
+		try {
+
+			BufferedWriter writer=new BufferedWriter(new FileWriter(f));
+
 		Logger.writeLog("Extracting properties from "+peptidesWithIntensityFile.getName()+"...");
 		ArrayList<PropertyInterface> properties=getProperties();
 		String[] propertyNames=new String[properties.size()];
+		writer.write("Sequence\tIntensity");
 		for (int i=0; i<propertyNames.length; i++) {
 			propertyNames[i]=properties.get(i).toString();
+			writer.write("\t"+propertyNames[i]);
 		}
+writer.newLine();
 		
 		ArrayList<AbstractPeptide> peptides=getPeptides(peptidesWithIntensityFile, properties);
 
@@ -87,7 +99,11 @@ public class BuildClassifier {
 		for (int i=0; i<trainingIntensities.length; i++) {
 			AbstractPeptide peptide=peptides.get(i);
 			trainingIntensities[i]=peptide.getIntensity();
+			writer.write(peptide.getSequence()+"\t"+peptide.getIntensity()+"\t"+General.toPropertyString(peptide.getScoreArray()));
+			writer.newLine();
 		}
+		writer.flush();
+		if (true) System.exit(1);
 		trainingIntensities=General.rank(trainingIntensities);
 		
 		double[][] trainingValues=new double[propertyNames.length][];
@@ -106,10 +122,13 @@ public class BuildClassifier {
 		BackPropNeuralNetwork backprop=NeuralNetworkGenerator.getNeuralNetwork(trainingIntensities, trainingValues, bestFeatureIndicies, usedProperties);
 		
 		return backprop;
+		} catch (IOException ioe) {
+			return null;
+		}
 	}
 
 	private static ArrayList<AbstractPeptide> getPeptides(File peptidesWithIntensityFile, ArrayList<PropertyInterface> properties) {
-		ArrayList<AbstractPeptide> peptides=new ArrayList<>();
+		ArrayList<AbstractPeptide> peptides=new ArrayList<AbstractPeptide>();
 		Protein protein=new Protein(peptidesWithIntensityFile.getName());
 		BufferedReader reader=null;
 		try {
@@ -144,14 +163,19 @@ public class BuildClassifier {
 	}
 
 	private static ArrayList<PropertyInterface> getProperties() {
-		ArrayList<PropertyInterface> properties=new ArrayList<>();
+		ArrayList<PropertyInterface> properties=new ArrayList<PropertyInterface>();
 		properties.add(new LengthProperty());
 		properties.add(new NumberBasicProperty());
 		properties.add(new NumberAcidicProperty());
 		properties.add(new MassProperty());
 		
+//		for (char c : "ACDEFGHIKLMNPQRSTVWY".toCharArray()) {
+//			properties.add(new NumberAAProperty(c));
+//		}
+		
 		try {
-			URI uri=ClassLoader.getSystemResource("aaindex1").toURI();
+			URI uri=AAIndex1Parser.class.getClassLoader().getResource("aaindex1").toURI();
+			//URI uri=ClassLoader.getSystemResource("aaindex1").toURI();
 			File f=new File(uri);
 			properties.addAll(AAIndex1Parser.parseAAIndex1(f, false));
 		} catch (URISyntaxException urise) {

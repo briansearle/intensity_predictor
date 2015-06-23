@@ -38,7 +38,7 @@ import gnu.trove.list.array.TDoubleArrayList;
 public class CalculateStatistics {
 	private static final int topXofN=1;
 	private static final float percentBetterThan=0.80f;
-	private static final int topN=25;
+	private static final int topN=15;
 	private static final int minimumNumPeptides=4;
 
 	public static void main(String[] args) {
@@ -52,20 +52,20 @@ public class CalculateStatistics {
 			else if (jim44) args=new String[] {base+"ppa_newjim_scores.txt"};
 			else args=new String[] {base+"ppa_jim18_scores.txt"};
 		}
-		if (true) {
+		if (false) {
 			if (andrew) args=new String[] {base+"esp_andrew_scores.txt"};
 			else if (jim44) args=new String[] {base+"esp_newjim_scores.txt"};
 			else args=new String[] {base+"esp_jim18_scores.txt"};
 		}
-		if (false) {
+		if (true) {
 			if (andrew) args=new String[] {base+"consequence_ann_andrew_scores.txt"};
 			else args=new String[] {base+"consequence_ann_jim18_scores.txt"};
 		}
-		if (false) {
+		if (true) {
 			if (andrew) args=new String[] {base+"consequence_svm_andrew_scores.txt"};
 			else args=new String[] {base+"consequence_svm_scores.txt"};
 		}
-		if (true) {
+		if (false) {
 			String nnLocation=base+"new_jarrett_intensities.nn"; // using intensities
 			if (andrew) args=new String[] {base+"esp_andrew_scores.txt", nnLocation};
 			else if (jim44) args=new String[] {base+"esp_newjim_scores.txt", nnLocation};
@@ -202,7 +202,7 @@ public class CalculateStatistics {
 	 * @return
 	 */
 	public static ArrayList<Protein> getProteins(File peptidesWithIntensityFile, BackPropNeuralNetwork network, boolean random) {
-		HashMap<String, Protein> proteinMap=new HashMap<>();
+		HashMap<String, Protein> proteinMap=new HashMap<String, Protein>();
 		BufferedReader reader=null;
 		try {
 			reader=new BufferedReader(new FileReader(peptidesWithIntensityFile));
