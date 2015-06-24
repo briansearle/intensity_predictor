@@ -1,6 +1,7 @@
 package edu.washington.maccoss.intensity_predictor;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -18,30 +19,6 @@ import edu.washington.maccoss.intensity_predictor.structures.PeptideData;
 
 public class Prego {
 	private static BackPropNeuralNetwork network=null;
-	
-	public static BackPropNeuralNetwork getNetwork() {
-		if (network!=null) return network;
-		
-		try {
-			
-			URI uri=NeuralNetworkData.class.getClassLoader().getResource("new_jarrett_intensities.nn").toURI();
-			File neuralNetworkFile=new File(uri);
-
-			try {
-				network=NeuralNetworkData.readNetwork(neuralNetworkFile);
-			} catch (Exception e) {
-				Logger.writeError("Error default reading neural network file!");
-				Logger.writeError(e);
-				System.exit(1);
-			}
-
-		} catch (URISyntaxException urise) {
-			Logger.writeError("Error finding default neural network file.");
-			Logger.writeError(urise);
-			System.exit(1);
-		}
-		return network;
-	}
 	
 	public static ArrayList<PeptideData> processText(String text, int numberOfPeptides) {
 		TreeMap<String, ArrayList<String>> proteinMap=new TreeMap<String, ArrayList<String>>();
@@ -90,5 +67,26 @@ public class Prego {
 			}
 		}
 		return result;
+	}
+
+	public static BackPropNeuralNetwork getNetwork() {
+		if (network!=null) return network;
+
+		try {
+			network=readNetwork("new_jarrett_intensities.nn");
+		} catch (Exception e) {
+			Logger.writeError("Error default reading neural network file!");
+			Logger.writeError(e);
+			System.exit(1);
+		}
+		return network;
+	}
+
+	public static BackPropNeuralNetwork readNetwork(String path) {
+		ClassLoader classLoader=ClassifyPeptides.class.getClassLoader();
+		InputStream inClassifier=classLoader.getResourceAsStream(path+"/neural_network_classifier.nn");
+		InputStream inMetadata=classLoader.getResourceAsStream(path+"/neural_network_metadata.nn");
+		InputStream inProperties=classLoader.getResourceAsStream(path+"/neural_network_properties.nn");
+		return NeuralNetworkData.readNetwork(inClassifier, inMetadata, inProperties);
 	}
 }

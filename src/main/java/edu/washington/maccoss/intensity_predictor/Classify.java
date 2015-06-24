@@ -286,7 +286,7 @@ public class Classify {
 			}
 
 			try {
-				network=NeuralNetworkData.readNetwork(neuralNetworkFile);
+				network=Prego.readNetwork(neuralNetworkFile.getAbsolutePath());
 			} catch (Exception e) {
 				Logger.writeError("Error reading neural network file!");
 				Logger.writeError(e);
@@ -296,24 +296,7 @@ public class Classify {
 			arguments.remove(0);
 			
 		} else {
-			try {
-				
-				URI uri=NeuralNetworkData.class.getClassLoader().getResource("new_jarrett_intensities.nn").toURI();
-				File neuralNetworkFile=new File(uri);
-
-				try {
-					network=NeuralNetworkData.readNetwork(neuralNetworkFile);
-				} catch (Exception e) {
-					Logger.writeError("Error default reading neural network file!");
-					Logger.writeError(e);
-					System.exit(1);
-				}
-
-			} catch (URISyntaxException urise) {
-				Logger.writeError("Error finding default neural network file.");
-				Logger.writeError(urise);
-				System.exit(1);
-			}
+			network=Prego.getNetwork();
 		}
 		return network;
 	}

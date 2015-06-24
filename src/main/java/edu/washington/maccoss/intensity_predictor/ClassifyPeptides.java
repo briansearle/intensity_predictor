@@ -36,7 +36,7 @@ public class ClassifyPeptides {
 		return getGoodPeptides(peptides, 5);
 	}
 	public static List<PeptideData> getGoodPeptides(List<String> peptides, int numberOfPeptides) {
-		BackPropNeuralNetwork network=getNetwork();
+		BackPropNeuralNetwork network=Prego.getNetwork();
 
 		TreeMap<String, ArrayList<String>> proteinMap=new TreeMap<>();
 
@@ -184,26 +184,5 @@ public class ClassifyPeptides {
 			return reportFile;
 		}
 		return null;
-	}
-
-	private static BackPropNeuralNetwork getNetwork() {
-		BackPropNeuralNetwork network=null;
-
-		try {
-			network=ReadNetwork("new_jarrett_intensities.nn");
-		} catch (Exception e) {
-			Logger.writeError("Error default reading neural network file!");
-			Logger.writeError(e);
-			System.exit(1);
-		}
-		return network;
-	}
-
-	private static BackPropNeuralNetwork ReadNetwork(String path) {
-		ClassLoader classLoader=ClassifyPeptides.class.getClassLoader();
-		InputStream inClassifier=classLoader.getResourceAsStream(path+"/neural_network_classifier.nn");
-		InputStream inMetadata=classLoader.getResourceAsStream(path+"/neural_network_metadata.nn");
-		InputStream inProperties=classLoader.getResourceAsStream(path+"/neural_network_properties.nn");
-		return NeuralNetworkData.readNetwork(inClassifier, inMetadata, inProperties);
 	}
 }
