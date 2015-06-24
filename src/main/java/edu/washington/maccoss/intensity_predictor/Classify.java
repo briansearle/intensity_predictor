@@ -127,9 +127,9 @@ public class Classify {
 		}
 	}
 	
-	private static class ScoredPeptide implements Comparable<ScoredPeptide> {
-		private final double score;
-		private final String sequence;
+	public static class ScoredPeptide implements Comparable<ScoredPeptide> {
+		final double score;
+		final String sequence;
 		public ScoredPeptide(double score, String sequence) {
 			this.score=score;
 			this.sequence=sequence;
@@ -168,7 +168,7 @@ public class Classify {
 		return proteinMap;
 	}
 
-	private static ArrayList<String> digestProtein(String sequence, int minLength, int maxLength) {
+	public static ArrayList<String> digestProtein(String sequence, int minLength, int maxLength) {
 		ArrayList<String> peptides=new ArrayList<String>();
 		String peptide;
 		int start=0;

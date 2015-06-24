@@ -3,9 +3,12 @@ package edu.washington.maccoss.intensity_predictor.parsers;
 import gnu.trove.map.hash.TIntIntHashMap;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class FastaReader {
@@ -25,7 +28,30 @@ public class FastaReader {
 		ArrayList<FastaEntry> entryList=new ArrayList<FastaEntry>();
 		try {
 			in=new BufferedReader(new FileReader(f));
+			return readFasta(in, f.getName());
 
+		} catch (IOException ioe) {
+			System.out.println("I/O Error found reading FASTA ["+f.getAbsolutePath()+"]");
+			ioe.printStackTrace();
+			return entryList;
+		} finally {
+			if (in!=null) {
+				try {
+					in.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public static ArrayList<FastaEntry> readFasta(String s, String fileName) {
+		return readFasta(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8)))), fileName);
+	}
+	
+	public static ArrayList<FastaEntry> readFasta(BufferedReader in, String fileName) {
+		ArrayList<FastaEntry> entryList=new ArrayList<FastaEntry>();
+		try {
 			String eachline;
 			String annotation=null;
 			StringBuilder sequence=new StringBuilder();
@@ -35,7 +61,7 @@ public class FastaReader {
 				}
 				if (eachline.startsWith(">")) {
 					if (annotation!=null) {
-						entryList.add(new FastaEntry(f.getName(), annotation, sequence.toString()));
+						entryList.add(new FastaEntry(fileName, annotation, sequence.toString()));
 					}
 					annotation=eachline;
 					sequence.setLength(0);
@@ -44,12 +70,12 @@ public class FastaReader {
 				}
 			}
 			if (annotation!=null) {
-				entryList.add(new FastaEntry(f.getName(), annotation, sequence.toString()));
+				entryList.add(new FastaEntry(fileName, annotation, sequence.toString()));
 			}
 			return entryList;
 
 		} catch (IOException ioe) {
-			System.out.println("I/O Error found reading FASTA ["+f.getAbsolutePath()+"]");
+			System.out.println("I/O Error found reading FASTA ["+fileName+"]");
 			ioe.printStackTrace();
 			return entryList;
 		} finally {
