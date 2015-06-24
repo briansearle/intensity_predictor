@@ -19,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
-import edu.washington.maccoss.intensity_predictor.math.NeuralNetworkData;
 import edu.washington.maccoss.intensity_predictor.structures.PeptideData;
 
 public class ClassifyPeptides {

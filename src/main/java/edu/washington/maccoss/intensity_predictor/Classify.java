@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,7 +30,6 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import edu.washington.maccoss.intensity_predictor.math.BackPropNeuralNetwork;
-import edu.washington.maccoss.intensity_predictor.math.NeuralNetworkData;
 import edu.washington.maccoss.intensity_predictor.parsers.FastaEntry;
 import edu.washington.maccoss.intensity_predictor.parsers.FastaReader;
 

@@ -33,7 +33,6 @@ import edu.washington.maccoss.intensity_predictor.parsers.AAIndex1Parser;
 import edu.washington.maccoss.intensity_predictor.properties.AbstractProperty;
 import edu.washington.maccoss.intensity_predictor.properties.LengthProperty;
 import edu.washington.maccoss.intensity_predictor.properties.MassProperty;
-import edu.washington.maccoss.intensity_predictor.properties.NumberAAProperty;
 import edu.washington.maccoss.intensity_predictor.properties.NumberAcidicProperty;
 import edu.washington.maccoss.intensity_predictor.properties.NumberBasicProperty;
 import edu.washington.maccoss.intensity_predictor.properties.PropertyInterface;
