@@ -1,9 +1,6 @@
 package edu.washington.maccoss.intensity_predictor;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map.Entry;
