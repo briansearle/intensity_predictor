@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -129,6 +130,42 @@ public class NeuralNetworkData {
 			try {
 			if (in!=null) in.close();
 			if (oistream!=null) oistream.close();
+			} catch (IOException ioe) {
+				Logger.writeError("IOException closing read Neural Network properties file.");
+				Logger.writeError(ioe);
+			}
+		}
+	}
+
+	public static BackPropNeuralNetwork readNetwork(InputStream classifier, InputStream metadata, InputStream properties) {
+		Properties props=new Properties();
+
+		ObjectInputStream oistream=null;
+		try {
+			NeuralNetwork nn = (NeuralNetwork)new ObjectInputStream(new BufferedInputStream(classifier)).readObject();
+			props.load(metadata);
+			double[] min=General.fromPropertyString(props.getProperty(minArrayName));
+			double[] max=General.fromPropertyString(props.getProperty(maxArrayName));
+
+			oistream = new ObjectInputStream(new BufferedInputStream(properties));
+			ArrayList<AbstractProperty> propertyList=(ArrayList<AbstractProperty>)oistream.readObject();
+			return new BackPropNeuralNetwork(nn, min, max, propertyList);
+
+		} catch (ClassNotFoundException cnfe) {
+			Logger.writeError("ClassNotFoundException reading Neural Network properties file.");
+			Logger.writeError(cnfe);
+			return null;
+		} catch (FileNotFoundException fnfe) {
+			Logger.writeError("FileNotFoundException reading Neural Network metadata file.");
+			Logger.writeError(fnfe);
+			return null;
+		} catch (IOException ioe) {
+			Logger.writeError("IOException reading Neural Network properties file.");
+			Logger.writeError(ioe);
+			return null;
+		} finally {
+			try {
+				if (oistream!=null) oistream.close();
 			} catch (IOException ioe) {
 				Logger.writeError("IOException closing read Neural Network properties file.");
 				Logger.writeError(ioe);
