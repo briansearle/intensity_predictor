@@ -2,6 +2,7 @@ package edu.washington.maccoss.intensity_predictor.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class PregoPanel extends JPanel {
 		contextMenu.add(leftTextArea);
 
 		JPanel leftPane=new JPanel(new BorderLayout());
-		JLabel label=new JLabel("Paste in your FASTA here:", new EmptyIcon(1, 40), SwingConstants.LEFT);
+		JLabel label=new JLabel("<html><center>Paste in your FASTA here:<br><small>This interface is designed for less than 100 proteins.<br>Please use the command line tools if you need to do more.", new EmptyIcon(1, 50), SwingConstants.LEFT);
 		JPanel leftLabelPanel=new JPanel(new FlowLayout());
 		leftLabelPanel.add(label);
 		leftPane.add(leftLabelPanel, BorderLayout.NORTH);
@@ -117,7 +118,7 @@ public class PregoPanel extends JPanel {
 			}
 		});
 		spinnerLabel.add(spinner);
-		spinnerLabel.add(new JLabel(" peptides per protein:", new EmptyIcon(1, 40), SwingConstants.LEFT));
+		spinnerLabel.add(new JLabel(" peptides per protein:", new EmptyIcon(1, 50), SwingConstants.LEFT));
 		
 		rightPane.add(spinnerLabel, BorderLayout.NORTH);
 		rightPane.add(rightScrollPane, BorderLayout.CENTER);
@@ -129,7 +130,12 @@ public class PregoPanel extends JPanel {
 	}
 
 	public void processText(String text) {
-		ArrayList<PeptideData> data=Prego.processText(text, (Integer)spinnerModel.getValue());
-		model.updatePeptideData(data);
+		try {
+			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			ArrayList<PeptideData> data=Prego.processText(text, (Integer)spinnerModel.getValue());
+			model.updatePeptideData(data);
+		} finally {
+			this.setCursor(Cursor.getDefaultCursor());
+		}
 	}
 }
