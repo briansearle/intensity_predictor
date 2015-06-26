@@ -75,6 +75,8 @@ public class Classify {
 			}
 		}
 		
+		int count=0;
+		
 		for (Entry<String, ArrayList<String>> entry : proteinMap.entrySet()) {
 			String accession=entry.getKey();
 			ArrayList<String> sequences=entry.getValue();
@@ -94,10 +96,11 @@ public class Classify {
 					for (int i=0; i<scores.size(); i++) {
 						ScoredPeptide scoredPeptide=scores.get(i);
 						int index=i+1;
+						count++;
 
-						if (index%1000==0) System.out.print(".");
-						if (index%10000==0) System.out.print(" ");
-						if (index%50000==0) System.out.println();
+						if (count%100000==0) System.out.print(".");
+						if (count%1000000==0) System.out.print(" ");
+						if (count%5000000==0) System.out.println();
 						
 						out.write(accession+"\t"+index+"\t"+scoredPeptide.sequence+"\t"+scoredPeptide.score);
 						out.newLine();
@@ -115,6 +118,7 @@ public class Classify {
 			}
 		}
 		if (out!=null) {
+			System.out.println();
 			try {
 				out.close();
 			} catch (IOException ioe) {
@@ -150,7 +154,14 @@ public class Classify {
 		for (String fileName : arguments) {
 			File f=new File(fileName);
 			ArrayList<FastaEntry> proteins=FastaReader.readFasta(f);
+			int count=0;
 			for (FastaEntry entry : proteins) {
+				count++;
+
+				if (count%10000==0) System.out.print(".");
+				if (count%100000==0) System.out.print(" ");
+				if (count%500000==0) System.out.println();
+				
 				ArrayList<String> peptides;
 				if (!trypticDigest) {
 					peptides=new ArrayList<>();
@@ -158,10 +169,11 @@ public class Classify {
 				} else {
 					peptides=digestProtein(entry.getSequence(), minLength, maxLength);
 				}
-				String accession=entry.getAnnotation().substring(0, entry.getAnnotation().indexOf(' '));
+				String accession=entry.getAnnotation().substring(1, entry.getAnnotation().indexOf(' '));
 				proteinMap.put(accession, peptides);
 			}
 		}
+		System.out.println();
 		return proteinMap;
 	}
 
