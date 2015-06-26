@@ -8,3 +8,11 @@ PREGO is a software tool that predicts high responding peptides for SRM experime
 PREGO is offered as an external tool for Skyline at <a href="https://brendanx-uw1.gs.washington.edu/labkey/skyts/home/software/Skyline/tools/details.view?name=Prego">https://brendanx-uw1.gs.washington.edu/labkey/skyts/home/software/Skyline/tools/details.view?name=Prego</a><br>
 <br>
 PREGO is also offered as a standalone cross platform tool with both graphical and command line interfaces at <a href="https://github.com/briansearle/intensity_predictor/tree/master/installers">https://github.com/briansearle/intensity_predictor/tree/master/installers</a><br>
+<br>
+You can download individual PREGO installers by right clicking on the links below and selecting "Save Link As...":
+<ul>
+  <li><a href="https://github.com/briansearle/intensity_predictor/blob/master/installers/PREGO_windows-x64_0_1_2.exe?raw=true">Windows 64-bit</a></li>
+  <li><a href="https://github.com/briansearle/intensity_predictor/blob/master/installers/PREGO_windows_0_1_2.exe?raw=true">Windows 32-bit</a></li>
+  <li><a href="https://github.com/briansearle/intensity_predictor/blob/master/installers/PREGO_macos_0_1_2.dmg?raw=true">Mac 64-bit</a></li>
+  <li><a href="https://github.com/briansearle/intensity_predictor/blob/master/installers/PREGO_unix_0_1_2.sh?raw=true">Linux 64-bit</a></li>
+</ul>
