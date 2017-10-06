@@ -1,4 +1,5 @@
 # PREGO Peptide Response Predictor
+<b>The new home for this repo is <a href="https://bitbucket.org/searleb/prego-srm-response-predictor">https://bitbucket.org/searleb/prego-srm-response-predictor</a></b><br><br>
 <b>Using data independent acquisition to model high-responding peptides for targeted proteomics experiments.</b><br>
 <i>Brian C. Searle, Jarrett D. Egertson, James G. Bollinger, Andrew B. Stergachis and Michael J. MacCoss<br>
 Published by Molecular and Cellular Proteomics on June 22, 2015, doi: 10.1074/mcp.M115.051300</i><br>
